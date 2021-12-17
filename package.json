@@ -1,0 +1,40 @@
+{
+  "name": "nolandia",
+  "version": "1.0.0",
+  "description": "The Nolandia 2d multicolor metaverse",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "hardhat test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nol13/nolandia.git"
+  },
+  "keywords": [
+    "hardhat",
+    "ethereum",
+    "hackathon"
+  ],
+  "author": "Nolan Kaplan",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/nol13/nolandia"
+  },
+  "homepage": "https://github.com/nol13/nolandia",
+  "devDependencies": {
+    "@nomiclabs/hardhat-ethers": "^2.0.0",
+    "@nomiclabs/hardhat-waffle": "^2.0.0",
+    "@types/chai": "^4.3.0",
+    "@types/mocha": "^9.0.0",
+    "@types/node": "^16.11.12",
+    "chai": "^4.3.4",
+    "ethereum-waffle": "^3.1.1",
+    "ethers": "^5.0.0",
+    "hardhat": "^2.7.0",
+    "husky": "^4.2.5",
+    "ts-node": "^10.4.0",
+    "typescript": "^4.5.3"
+  }
+}
