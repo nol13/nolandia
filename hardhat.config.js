@@ -16,7 +16,7 @@ const ALCHEMY_API_KEY = "y8DH9fbRKPwePMOfYj_nNIil8Llk6CqK";
 const ROPSTEN_PRIVATE_KEY = "7e6dc6d1a6f895f1c8019808bdb23f8214dc3f366f1810556d7202d0eb613ef5";
 
 module.exports = {
-  solidity: "0.8.10",
+  solidity: "0.8.9",
   networks: {
     hardhat: {
       chainId: 1337

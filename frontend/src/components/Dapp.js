@@ -5,7 +5,7 @@ import { ethers } from "ethers";
 
 // We import the contract's artifacts and address here, as we are going to be
 // using them with ethers
-import TokenArtifact from "../contracts/Token.json";
+import TokenArtifact from "../contracts/Nolandia.json";
 import contractAddress from "../contracts/contract-address.json";
 
 // All the logic of this dapp is contained in the Dapp component.
@@ -19,10 +19,12 @@ import { TransactionErrorMessage } from "./TransactionErrorMessage";
 import { WaitingForTransactionMessage } from "./WaitingForTransactionMessage";
 import { NoTokensMessage } from "./NoTokensMessage";
 
+const oneEth = "1000000000000000000";
+
 // This is the Hardhat Network id, you might change it in the hardhat.config.js
 // Here's a list of network ids https://docs.metamask.io/guide/ethereum-provider.html#properties
 // to use when deploying to other networks.
-const HARDHAT_NETWORK_ID = '31337';
+const HARDHAT_NETWORK_ID = '1337';
 const ROP_NETWORK_ID = '3';
 
 // This is an error code that indicates that the user canceled a transaction
@@ -40,6 +42,7 @@ const ERROR_CODE_TX_REJECTED_BY_USER = 4001;
 // transaction.
 export class Dapp extends React.Component {
   constructor(props) {
+    super();
 
     // We store multiple things in Dapp's state.
     // You don't need to follow this pattern, but it's an useful example.
@@ -59,6 +62,7 @@ export class Dapp extends React.Component {
   }
 
   render() {
+   
     // Ethereum wallets inject the window.ethereum object. If it hasn't been
     // injected, we instruct the user to install MetaMask.
     if (window.ethereum === undefined) {
@@ -81,6 +85,8 @@ export class Dapp extends React.Component {
         />
       );
     }
+
+     return <div>lol</div>;
 
     // If the token data or the user's balance hasn't loaded yet, we show
     // a loading component.
@@ -137,7 +143,7 @@ export class Dapp extends React.Component {
             {/*
               If the user has no tokens, we don't show the Tranfer form
             */}
-            {this.state.balance.eq(0) && (
+            {this.state.balance.eq(0) && false && (
               <NoTokensMessage selectedAddress={this.state.selectedAddress} />
             )}
 
@@ -168,21 +174,28 @@ export class Dapp extends React.Component {
   }
 
   async _connectWallet() {
+    
     // This method is run when the user clicks the Connect. It connects the
     // dapp to the user's wallet, and initializes it.
 
     // To connect to the user's wallet, we have to run this method.
     // It returns a promise that will resolve to the user's address.
-    const [selectedAddress] = await window.ethereum.enable();
+    const [selectedAddress] = await window.ethereum.request({
+      method: "eth_requestAccounts",
+    });
 
     // Once we have the address, we can initialize the application.
 
     // First we check the network
+    console.log(selectedAddress);
+    
+
     if (!this._checkNetwork()) {
       return;
     }
 
     this._initialize(selectedAddress);
+
 
     // We reinitialize it whenever the user changes their account.
     window.ethereum.on("accountsChanged", ([newAddress]) => {
@@ -220,7 +233,7 @@ export class Dapp extends React.Component {
     // sample project, but you can reuse the same initialization pattern.
     this._intializeEthers();
     this._getTokenData();
-    this._startPollingData();
+    //this._startPollingData();
   }
 
   async _intializeEthers() {
@@ -230,7 +243,7 @@ export class Dapp extends React.Component {
     // When, we initialize the contract using that provider and the token's
     // artifact. You can do this same thing with your contracts.
     this._token = new ethers.Contract(
-      contractAddress.Token,
+      contractAddress.Nolandia,
       TokenArtifact.abi,
       this._provider.getSigner(0)
     );
@@ -244,24 +257,43 @@ export class Dapp extends React.Component {
   // don't need to poll it. If that's the case, you can just fetch it when you
   // initialize the app, as we do with the token data.
   _startPollingData() {
-    this._pollDataInterval = setInterval(() => this._updateBalance(), 1000);
+    //this._pollDataInterval = setInterval(() => this._updateBalance(), 1000);
 
     // We run it once immediately so we don't have to wait for it
-    this._updateBalance();
+    //this._updateBalance();
   }
 
   _stopPollingData() {
-    clearInterval(this._pollDataInterval);
-    this._pollDataInterval = undefined;
+    //clearInterval(this._pollDataInterval);
+    //this._pollDataInterval = undefined;
   }
 
   // The next two methods just read from the contract and store the results
   // in the component state.
   async _getTokenData() {
-    const name = await this._token.name();
-    const symbol = await this._token.symbol();
+    console.log('heh')
+    //const name = await this._token.name();
+    const pixel00 = await this._token.pixels(110, 110);
 
-    this.setState({ tokenData: { name, symbol } });
+    var overrideOptions = {
+      gasLimit: 250000,
+      gasPrice: 9000000000,
+      nonce: 0,
+      //value: ethers.BigNumber.from("1000000000000000000"),
+      value: ethers.BigNumber.from("1"),
+    };
+
+    const pixel01 = await this._token.functions.buyPlot(11, 12, 2, 3, overrideOptions);
+    console.log(pixel00)
+    console.log(pixel01);
+
+    //const pixel02 = await this._token.pixels(0, 0);
+    const bal = await this._provider.getBalance(
+      "0x4ED89de99BA00031A6C6780A4a22fBfC7a43C9A3"
+    );
+    //console.log(pixel02);
+    console.log(bal);
+    //this.setState({ pixel00 });
   }
 
   async _updateBalance() {
@@ -356,12 +388,14 @@ export class Dapp extends React.Component {
 
   // This method checks if Metamask selected network is Localhost:8545 
   _checkNetwork() {
+    console.log(window.ethereum.networkVersion);
+    //if (window.ethereum.networkVersion === HARDHAT_NETWORK_ID) {
     if (window.ethereum.networkVersion === ROP_NETWORK_ID) {
       return true;
     }
 
     this.setState({ 
-      networkError: 'Please connect Metamask to Localhost:8545'
+      networkError: 'Please connect Metamask to Polygon '
     });
 
     return false;

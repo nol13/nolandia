@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0
 
-pragma solidity ^0.8.10;
+pragma solidity ^0.8.9;
 
 pragma experimental ABIEncoderV2;
 
@@ -11,6 +11,9 @@ import "hardhat/console.sol";
 contract Nolandia {
     string public name = "Nolandia";
     string public symbol = "NOLAND";
+
+    //uint256 internal ethFactor = 1000000000000000000;
+    uint256 internal ethFactor = 1;
 
     struct px {
         uint256 color;
@@ -30,24 +33,24 @@ contract Nolandia {
     }
 
     event PurchasedPixel(
-        address indexed _owner,
-        uint128 _x,
-        uint128 _y,
-        uint256 _color
+        address indexed owner,
+        uint128 x,
+        uint128 y,
+        uint256 color
     );
 
     event PixelColorSet(
-        address indexed _owner,
-        uint128 _x,
-        uint128 _y,
-        uint256 _color
+        address indexed owner,
+        uint128 x,
+        uint128 y,
+        uint256 color
     );
 
     event PixelTransfered(
-        address indexed _from,
-        address indexed _to,
-        uint128 _x,
-        uint128 _y
+        address indexed from,
+        address indexed to,
+        uint128 x,
+        uint128 y
     );
 
     px[1000][1000] public pixels;
@@ -55,7 +58,6 @@ contract Nolandia {
 
     constructor() {
         owner = msg.sender;
-        pixels[0][0] = px({color: 50, owner: msg.sender, owned: true});
     }
 
     function allPxAvailable (pxToBuy[] calldata requestedPixels) internal view returns (bool) {
@@ -95,7 +97,7 @@ contract Nolandia {
     }
 
     function buyPixels(pxToBuy[] calldata requestedPixels) external payable {
-        require(msg.value >= requestedPixels.length, 'wrong amount');
+        require(msg.value >= requestedPixels.length * ethFactor, 'wrong amount');
         require(allPxAvailable(requestedPixels) != false, 'some pixels already owned');
         setPixels(requestedPixels);
         payable(owner).transfer(msg.value);
@@ -126,7 +128,7 @@ contract Nolandia {
         require(x2 <= 1000 && y2 <= 1000, "second coord 1000 or smaller");
         require(x1 < x2 && y1 < y2, "2nd coord smaller than first coord");
         uint totalAmt = (x2 - x1) * (y2 - y1);
-        require(totalAmt == msg.value, "wrong amount");
+        require(totalAmt * ethFactor == msg.value, "wrong amount");
         require(allPlotPxAvailable(x1, y1, x2, y2) != false, 'some of these pixels are already owned');
         setPlotPixels(x1, y1, x2, y2);
         payable(owner).transfer(msg.value);
