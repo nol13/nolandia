@@ -1,0 +1,7 @@
+{
+    "projectName": "Nolandia",
+    "namespace": "Nolandia.Contracts",
+    "lang": 0,
+    "autoCodeGen": true,
+    "projectPath": "../"
+}
