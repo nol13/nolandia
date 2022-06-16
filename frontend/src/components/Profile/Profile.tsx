@@ -17,12 +17,12 @@ export const  Profile = () => {
   if (account) {
     return (
       <div>
-        <img src={ensAvatar} alt="ENS Avatar"></img>
+        <img src={ensAvatar ?? ""} alt="ENS Avatar"></img>
         <div>
           {ensName ? `${ensName} (${account.address})` : account.address}
         </div>
-        <div>Connected to {account.connector.name}</div>
-        <button onClick={disconnect}>Disconnect</button>
+        <div>Connected to {account?.connector?.name}</div>
+        <button onClick={() => disconnect}>Disconnect</button>
       </div>
     )
   }
