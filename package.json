@@ -6,6 +6,11 @@
     "test": "test"
   },
   "scripts": {
+    "dev": "npm run deploy-contract && npm run frontend",
+    "init": "npm install && npm install --prefix frontend",
+    "network": " npx hardhat node",
+    "deploy-contract": "hardhat run scripts/deploy.js --network localhost",
+    "frontend": "npm start --prefix frontend",
     "test": "hardhat test"
   },
   "repository": {
