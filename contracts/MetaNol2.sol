@@ -104,11 +104,7 @@ contract Nolandia is ERC721, Ownable /* , ERC721Enumerable, ERC721Royalty */ {
 
     function tokenURI(uint256 tokenId) public view virtual override returns (string memory) {
         require(_exists(tokenId), "ERC721Metadata: URI query for nonexistent token");
-        //(, int256 price, , , ) = i_priceFeed.latestRoundData();
-        //string memory imageURI = s_lowImageURI;
-        //if (price >= s_tokenIdToHighValues[tokenId]) {
-        //    imageURI = s_highImageURI;
-        //}
+        string memory imageURI = "myImageUrixxxxxx";
         return
             string(
                 abi.encodePacked(
@@ -117,10 +113,15 @@ contract Nolandia is ERC721, Ownable /* , ERC721Enumerable, ERC721Royalty */ {
                         bytes(
                             abi.encodePacked(
                                 '{"name":"',
-                                name(), // You can add whatever name here
-                                '", "description":"An NFT that changes based on the Chainlink Feed", ',
-                                '"attributes": [{"trait_type": "coolness", "value": 100}], "image":"',
-                                //imageURI,
+                                name(),
+                                ' - Plot ',
+                                tokenId, // You can add whatever name here
+                                '", "description":"A Plot of Nolandian Metaland", ',
+                                '"startCoord": [10, 10]',
+                                '"endCoord": [11, 11]',
+                                '"totalPixels": 64',
+                                '"attributes": [{"trait_type": "terrain", "value": "mountain"}], "image":"',
+                                imageURI,
                                 '"}'
                             )
                         )
