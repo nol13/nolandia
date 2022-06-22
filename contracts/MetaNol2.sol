@@ -117,10 +117,12 @@ contract Nolandia is ERC721, Ownable /* , ERC721Enumerable, ERC721Royalty */ {
                                 ' - Plot ',
                                 tokenId, // You can add whatever name here
                                 '", "description":"A Plot of Nolandian Metaland", ',
-                                '"startCoord": [10, 10]',
-                                '"endCoord": [11, 11]',
-                                '"totalPixels": 64',
-                                '"attributes": [{"trait_type": "terrain", "value": "mountain"}], "image":"',
+                                '"attributes": [',
+                                '{"trait_type": "coord1", "value": [10, 10]},',
+                                '{"trait_type": "coord2", "value": [11, 11]},',
+                                '{"trait_type": "totalPixels", "value": 64},',
+                                '{"trait_type": "terrain", "value": "mountain"}',
+                                '], "image":"',
                                 imageURI,
                                 '"}'
                             )
