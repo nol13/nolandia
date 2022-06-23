@@ -8,8 +8,8 @@ pragma experimental ABIEncoderV2;
 import "hardhat/console.sol";
 
 
-contract Nolandia {
-    string public name = "Nolandia";
+contract NolandiaOld {
+    string public name = "NolandiaOld";
     string public symbol = "NOLAND";
 
     //uint256 internal ethFactor = 1000000000000000000;

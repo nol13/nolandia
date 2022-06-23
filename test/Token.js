@@ -1,27 +1,9 @@
 // This is an exmaple test file. Hardhat will run every *.js file in `test/`,
 // so feel free to add new ones.
 
-// Hardhat tests are normally written with Mocha and Chai.
-
-// We import Chai to use its asserting functions here.
 const { expect } = require("chai");
 
-// `describe` is a Mocha function that allows you to organize your tests. It's
-// not actually needed, but having your tests organized makes debugging them
-// easier. All Mocha functions are available in the global scope.
-
-// `describe` recieves the name of a section of your test suite, and a callback.
-// The callback must define the tests of that section. This callback can't be
-// an async function.
 describe("Token contract", function () {
-  // Mocha has four functions that let you hook into the the test runner's
-  // lifecyle. These are: `before`, `beforeEach`, `after`, `afterEach`.
-
-  // They're very useful to setup the environment for tests, and to clean it
-  // up after they run.
-
-  // A common pattern is to declare some variables, and assign them in the
-  // `before` and `beforeEach` callbacks.
 
   let Token;
   let hardhatToken;
@@ -30,8 +12,6 @@ describe("Token contract", function () {
   let addr2;
   let addrs;
 
-  // `beforeEach` will run before each test, re-deploying the contract every
-  // time. It receives a callback, which can be async.
   beforeEach(async function () {
     // Get the ContractFactory and Signers here.
     Token = await ethers.getContractFactory("Nolandia");
@@ -41,26 +21,34 @@ describe("Token contract", function () {
     // To deploy our contract, we just have to call Token.deploy() and await
     // for it to be deployed(), which happens onces its transaction has been
     // mined.
-    hardhatToken = await Token.deploy();
+    hardhatToken = await Token.deploy([owner.address], [100]);
     await hardhatToken.deployed();
 
     // We can interact with the contract by calling `hardhatToken.method()`
     await hardhatToken.deployed();
   });
 
-  // You can nest describe calls to create subsections.
   describe("Deployment", function () {
-    // `it` is another Mocha function. This is the one you use to define your
-    // tests. It receives the test name, and a callback function.
 
-    // If the callback function is async, Mocha will `await` it.
     it("Should set the right owner", async function () {
-      // Expect receives a value, and wraps it in an assertion objet. These
-      // objects have a lot of utility methods to assert values.
-
-      // This test expects the owner variable stored in the contract to be equal
-      // to our Signer's owner.
       expect(await hardhatToken.owner()).to.equal(owner.address);
+    });
+
+    it("Should buy plot and set the right parcel owner owner", async function () {
+      const plotId = await hardhatToken.buyPlot(0, 0, 2, 2, { value: ethers.utils.parseEther("256") });
+      const plotId2 = await hardhatToken.buyPlot(2, 0, 3, 1, { value: ethers.utils.parseEther("64") });
+      expect(await hardhatToken.parcels(0, 0)).to.equal(1);
+      expect(await hardhatToken.parcels(2, 0)).to.equal(2);
+    });
+  });
+
+  /* 
+
+    
+     // console.log(await hardhatToken.parcels(0, 0));
+     // console.log(await hardhatToken.parcels(2, 0));
+
+      //  buyPlot(uint8 x1, uint8 y1, uint8 x2, uint8 y2
 
       //expect(await hardhatToken.getPixels()).to.equal(1000);
       //console.log(await hardhatToken.getPixels());
@@ -72,28 +60,28 @@ describe("Token contract", function () {
       //console.log(log);
 
       //console.log(await hardhatToken.pixels(2, 5));
-      const log = await hardhatToken.buyPlot(2, 3, 4, 7, { value: "3" });
+      //const log = await hardhatToken.buyPlot(2, 3, 4, 7, { value: "3" });
 
-      console.log(await hardhatToken.pixels(2, 5));
+      //console.log(await hardhatToken.pixels(2, 5));
 
-      await hardhatToken.setPixelsColor([[54, 2, 5]]);
+     // await hardhatToken.setPixelsColor([[54, 2, 5]]);
 
-      console.log(await hardhatToken.pixels(2, 5));
+      //console.log(await hardhatToken.pixels(2, 5));
 
 
 
       //console.log(await hardhatToken.getPixels(5, 0));
 
       //await hardhatToken.buyPixels([{color: 52, x: 1, y: 1}]);
-    });
-
-    /* it("Should assign the total supply of tokens to the owner", async function () {
+    
+    
+    it("Should assign the total supply of tokens to the owner", async function () {
       const ownerBalance = await hardhatToken.balanceOf(owner.address);
       expect(await hardhatToken.totalSupply()).to.equal(ownerBalance);
-    }); */
-  });
-
-  /* describe("Transactions", function () {
+    }); 
+  
+  
+  describe("Transactions", function () {
     it("Should transfer tokens between accounts", async function () {
       // Transfer 50 tokens from owner to addr1
       await hardhatToken.transfer(addr1.address, 50);

@@ -6,18 +6,19 @@ pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
+import "@openzeppelin/contracts/finance/PaymentSplitter.sol";
 // import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Royalty.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "base64-sol/base64.sol";
 import "hardhat/console.sol";
 
-contract Nolandia is ERC721, Ownable /* , ERC721Enumerable, ERC721Royalty */ {
+contract Nolandia is ERC721, Ownable, PaymentSplitter /* , ERC721Enumerable, ERC721Royalty */ {
 
     using Counters for Counters.Counter;
     Counters.Counter private _tokenIds;
 
-    //uint256 internal ethFactor = 1000000000000000000;
-    uint256 internal ethFactor = 1;
+    uint256 internal ethFactor = 1000000000000000000;
+    //uint256 internal ethFactor = 1;
     uint8 pxInParcel = 64;
 
     struct plot {
@@ -48,7 +49,7 @@ contract Nolandia is ERC721, Ownable /* , ERC721Enumerable, ERC721Royalty */ {
      mapping(uint256 => plot) plots;
 
     
-    constructor() ERC721("Nolandia", "NOLAND") {}
+    constructor(address[] memory _payees, uint256[] memory _shares) ERC721("Nolandia", "NOLAND") PaymentSplitter(_payees, _shares) payable {}
 
     function allParcelsAvailable (uint8 x1, uint8 y1, uint8 x2, uint8 y2) internal view returns (bool) {
         for (uint8 i = x1; i < x2; i++) {
@@ -72,20 +73,16 @@ contract Nolandia is ERC721, Ownable /* , ERC721Enumerable, ERC721Royalty */ {
         returns (uint256)
     {
         require(x1 >= 0 && y1 >= 0, "first coord 0 or bigger");
-        require(x2 <= 127 && y2 <= 127, "second coord 1000 or smaller");
+        require(x2 <= 128 && y2 <= 128, "second coord 128 or smaller");
         require(x1 < x2 && y1 < y2, "2nd coord smaller than first coord");
         uint totalAmt = (x2 - x1) * (y2 - y1);
         require(totalAmt * ethFactor * pxInParcel == msg.value, "wrong amount");
+         _tokenIds.increment();
         uint256 plotId = _tokenIds.current();
-        _tokenIds.increment();
         require(allParcelsAvailable(x1, y1, x2, y2) == true, 'a selected parcel is already owned');
         setParcelsOwned(x1, y1, x2, y2, plotId);
         _safeMint(msg.sender, plotId);
         plots[plotId] = plot({x1: x1, y1: y1, x2: x2, y2: y2, plotId: plotId, plotOwner: msg.sender});
-
-        //payable(owner1).transfer(msg.value/2); // should prob use PaymentSplitter instead
-        //payable(owner2).transfer(msg.value/2);
-        //payable(owner3).transfer(0);
         emit PlotPurchased(plotId, msg.sender, x1, y1, x2, y2);
         return plotId;
     }
