@@ -28,17 +28,36 @@ describe("Token contract", function () {
     await hardhatToken.deployed();
   });
 
-  describe("Deployment", function () {
+  describe("Nolandia", function () {
 
     it("Should set the right owner", async function () {
       expect(await hardhatToken.owner()).to.equal(owner.address);
     });
 
     it("Should buy plot and set the right parcel owner owner", async function () {
+      expect(await hardhatToken.provider.getBalance(hardhatToken.address)).to.equal(0);
       const plotId = await hardhatToken.buyPlot(0, 0, 2, 2, { value: ethers.utils.parseEther("256") });
       const plotId2 = await hardhatToken.buyPlot(2, 0, 3, 1, { value: ethers.utils.parseEther("64") });
+      expect(await hardhatToken.provider.getBalance(hardhatToken.address)).to.not.equal(0);
       expect(await hardhatToken.parcels(0, 0)).to.equal(1);
       expect(await hardhatToken.parcels(2, 0)).to.equal(2);
+
+      console.log(await hardhatToken.tokenURI(1));
+
+      try {
+        const x = await hardhatToken['release(address)']("0x9708ab788B9263992109EB13f453bC7A3348024A")
+        expect('should error before here').to.equal(1);
+      } catch {
+        expect(await hardhatToken.provider.getBalance(hardhatToken.address)).to.not.equal(0);
+      }
+
+      try {
+        const x = await hardhatToken['release(address)'](owner.address);
+      } catch {
+        expect('should not error').to.equal(1);
+      }
+      
+      expect(await hardhatToken.provider.getBalance(hardhatToken.address)).to.equal(0);
     });
   });
 
