@@ -21,7 +21,7 @@ describe("Token contract", function () {
     // To deploy our contract, we just have to call Token.deploy() and await
     // for it to be deployed(), which happens onces its transaction has been
     // mined.
-    hardhatToken = await Token.deploy([owner.address], [100]);
+    hardhatToken = await Token.deploy([owner.address, "0x9708ab788B9263992109EB13f453bC7A3348024A"], [50, 50]);
     await hardhatToken.deployed();
 
     // We can interact with the contract by calling `hardhatToken.method()`
@@ -44,8 +44,11 @@ describe("Token contract", function () {
 
       console.log(await hardhatToken.tokenURI(1));
 
+      const bal1 = await hardhatToken.provider.getBalance(hardhatToken.address);
+      console.log(2, typeof bal1, bal1)
+
       try {
-        const x = await hardhatToken['release(address)']("0x9708ab788B9263992109EB13f453bC7A3348024A")
+        const x = await hardhatToken['release(address)']("0x5acc84a3e955bdd76467d3348077d003f00ffb97")
         expect('should error before here').to.equal(1);
       } catch {
         expect(await hardhatToken.provider.getBalance(hardhatToken.address)).to.not.equal(0);
@@ -57,7 +60,18 @@ describe("Token contract", function () {
         expect('should not error').to.equal(1);
       }
       
+      expect(await hardhatToken.provider.getBalance(hardhatToken.address)).not.to.equal(0);
+      const bal2 = await hardhatToken.provider.getBalance(hardhatToken.address);
+      expect(bal1.gt(bal2)).to.equal(true);
+
+      try {
+        const x = await hardhatToken['release(address)']("0x9708ab788B9263992109EB13f453bC7A3348024A");
+      } catch {
+        expect('should not error').to.equal(1);
+      }
+
       expect(await hardhatToken.provider.getBalance(hardhatToken.address)).to.equal(0);
+
     });
   });
 
