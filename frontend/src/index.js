@@ -7,7 +7,7 @@ import { Dapp } from "./components/Dapp.tsx";
 
 ReactDOM.render(
   <React.StrictMode>
-    <Dapp message="sup"/>
+    <Dapp />
   </React.StrictMode>,
   document.getElementById("root")
 );
