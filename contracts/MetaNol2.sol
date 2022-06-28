@@ -9,6 +9,7 @@ import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/finance/PaymentSplitter.sol";
 // import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Royalty.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/utils/Strings.sol";
 import "base64-sol/base64.sol";
 import "hardhat/console.sol";
 
@@ -112,7 +113,7 @@ contract Nolandia is ERC721, Ownable, PaymentSplitter /* , ERC721Enumerable, ERC
                                 '{"name":"',
                                 name(),
                                 ' - Plot ',
-                                tokenId, // You can add whatever name here
+                                Strings.toString(tokenId), // You can add whatever name here
                                 '", "description":"A Plot of Nolandian Metaland", ',
                                 '"attributes": [',
                                 '{"trait_type": "coord1", "value": [10, 10]},',
