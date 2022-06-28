@@ -34,7 +34,7 @@ describe("Token contract", function () {
       expect(await hardhatToken.owner()).to.equal(owner.address);
     });
 
-    it("Should buy plot and set the right parcel owner owner", async function () {
+    it("Should buy plot and set the right parcel owner owner and split the payment", async function () {
       expect(await hardhatToken.provider.getBalance(hardhatToken.address)).to.equal(0);
       const plotId = await hardhatToken.buyPlot(0, 0, 2, 2, { value: ethers.utils.parseEther("256") });
       const plotId2 = await hardhatToken.buyPlot(2, 0, 3, 1, { value: ethers.utils.parseEther("64") });
@@ -45,7 +45,7 @@ describe("Token contract", function () {
       console.log(await hardhatToken.tokenURI(1));
 
       const bal1 = await hardhatToken.provider.getBalance(hardhatToken.address);
-      console.log(2, typeof bal1, bal1)
+      //console.log(2, typeof bal1, bal1)
 
       try {
         const x = await hardhatToken['release(address)']("0x5acc84a3e955bdd76467d3348077d003f00ffb97")
