@@ -28,5 +28,11 @@ module.exports = {
       accounts: [`${ROPSTEN_PRIVATE_KEY}`],
       chainId: 3
     },
+    mumbai: {
+      url: "https://rpc-mumbai.maticvigil.com",
+      accounts: [ROPSTEN_PRIVATE_KEY],
+      chainId: 80001,
+      gasPrice: 35000000000,
+    }
   }
 };

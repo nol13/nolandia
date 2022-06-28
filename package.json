@@ -10,6 +10,8 @@
     "init": "npm install && npm install --prefix frontend",
     "network": " npx hardhat node",
     "deploy-contract": "hardhat run scripts/deploy.js --network localhost",
+    "deploy-mumbai": "hardhat run scripts/deploy.js --network mumbai",
+    "deploy-ropsten": "hardhat run scripts/deploy.js --network ropsten",
     "frontend": "npm start --prefix frontend",
     "test": "hardhat test"
   },

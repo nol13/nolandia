@@ -17,8 +17,8 @@ contract Nolandia is ERC721, Ownable, PaymentSplitter /* , ERC721Enumerable, ERC
     using Counters for Counters.Counter;
     Counters.Counter private _tokenIds;
 
-    uint256 internal ethFactor = 1000000000000000000;
-    //uint256 internal ethFactor = 1;
+    //uint256 internal ethFactor = 1000000000000000000;
+    uint256 internal ethFactor = 1;
     uint8 pxInParcel = 64;
 
     struct plot {
