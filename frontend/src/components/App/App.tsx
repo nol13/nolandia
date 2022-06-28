@@ -1,5 +1,6 @@
 import React from 'react';
 import { useMoralis } from "react-moralis";
+import { MintPlot } from '../MintPlot/MintPlot';
 
 export const  App = () => {
 
@@ -26,10 +27,11 @@ export const  App = () => {
 
     return (
         <div>
-            <h1>{isAuthenticated && 'Authenticated '}Moralis Hello World!</h1>
+            <h1>{isAuthenticated && 'Authenticated '}Hello Wyrld!</h1>
             <p>{user?.get("ethAddress")}</p>
             <button onClick={login} disabled={isAuthenticated || isAuthenticating}>Moralis Metamask Login</button>
             <button onClick={logOut} disabled={isAuthenticating}>Logout</button>
+            { isAuthenticated && <MintPlot />}
         </div>
     );
 }
