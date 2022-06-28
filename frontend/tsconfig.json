@@ -13,6 +13,7 @@
         "skipLibCheck": true,
         "forceConsistentCasingInFileNames": true,
         "moduleResolution": "node",
-        "jsx": "preserve"
+        "jsx": "preserve",
+        "resolveJsonModule": true
     }
 }
