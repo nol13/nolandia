@@ -6,7 +6,7 @@ import contractAddress from "../../contracts/contract-address.json";
 
 
 export const MintPlot = () => {
-    const { user } = useMoralis();
+    const { user, enableWeb3 } = useMoralis();
     const { data, error, runContractFunction, isFetching, isLoading } =
         useWeb3Contract({
             abi: NolandiaAbi.abi,
@@ -25,8 +25,11 @@ export const MintPlot = () => {
     });
 
     useEffect(() => {
-        fetch();
-    }, [fetch])
+        enableWeb3().then(() => fetch())
+        //fetch();
+    }, [fetch, enableWeb3])
+
+    //console.log(isInitializing)
  
     
     const [x1, setX1] = useState<string>("");
@@ -54,8 +57,9 @@ export const MintPlot = () => {
             runContractFunction({ params: options }).then(() => fetch());
         }
     };
+    //console.log(bError)
     return (
-        <div>
+        <div style={{padding: '10px', border: '1px solid black'}}>
             <h1>Mint New Plot</h1>
             <div>x1: <input value={x1} onChange={e => setX1(e.target.value)} /></div>
             <div>y1: <input value={y1} onChange={e => setY1(e.target.value)} /></div>
@@ -63,9 +67,9 @@ export const MintPlot = () => {
             <div>x2: <input value={y2} onChange={e => setY2(e.target.value)} /></div>
             <div><button disabled={isFetching || isLoading} onClick={mint}>Mint!</button></div>
             <div>data: {JSON.stringify(data)}</div>
-            <div>error: {JSON.stringify(error)}</div>
-            <div>you own: {JSON.stringify(balanceData)}</div>
-            <div>b error: {JSON.stringify(bError)}</div>
+            <div>mint error: {JSON.stringify(error)}</div>
+            <div>you own: {JSON.stringify(balanceData)} plots</div>
+            <div>balance check error: {JSON.stringify(bError)}</div>
            
         </div>
     )
