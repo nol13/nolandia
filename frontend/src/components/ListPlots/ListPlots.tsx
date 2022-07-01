@@ -1,13 +1,14 @@
 import { useMoralisQuery } from "react-moralis";
 
 export const ListPlots = () => {
-    const { data, error, isLoading } = useMoralisQuery("Mints2");
+    const { data, error, isLoading } = useMoralisQuery("Mints3");
+    const { data: pixData, error: pixError, isLoading: pixIsLoading } = useMoralisQuery("PixelsSet");
 
-    if (error) {
+    if (error || pixError) {
         return <span>🤯</span>;
     }
 
-    if (isLoading) {
+    if (isLoading || pixIsLoading) {
         return <span>🙄</span>;
     }
 
@@ -23,7 +24,14 @@ export const ListPlots = () => {
                     </div>
                 );
             })}
+            <h1>Image Data Set</h1>
+            {pixData.map(plot => {
+                return (
+                    <div key={plot.get("plotId")} style={{ padding: "10px", border: "1px solid blue", margin: "10px" }}>
+                        <div>Plot ID: {plot.get("plotId")}</div>
+                        <div>Data: {plot.get("pixels")}</div>
+                    </div>
+                );
+            })}
         </div>);
-
-
 };
