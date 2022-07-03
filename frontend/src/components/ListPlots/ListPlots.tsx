@@ -29,7 +29,7 @@ export const ListPlots = () => {
                 return (
                     <div key={plot.get("plotId")} style={{ padding: "10px", border: "1px solid blue", margin: "10px" }}>
                         <div>Plot ID: {plot.get("plotId")}</div>
-                        <div>Data: {plot.get("pixels")}</div>
+                        <div>Data: {plot.get("imageData")}</div>
                     </div>
                 );
             })}

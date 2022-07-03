@@ -1,11 +1,12 @@
-import { useState } from "react";
-import { useWeb3Contract } from "react-moralis";
+import { useState, useEffect } from "react";
+import { useWeb3Contract, useMoralis } from "react-moralis";
 import NolandiaAbi from '../../contracts/Nolandia.json';
 import contractAddress from "../../contracts/contract-address.json";
 
 
+
 export const DrawPixels = () => {
-    const [plotId, setPlotId] = useState<string | undefined>();
+    const [plotId, setPlotId] = useState('');
     const { data, error, runContractFunction, isFetching, isLoading } =
         useWeb3Contract({
             abi: NolandiaAbi.abi,
@@ -13,11 +14,18 @@ export const DrawPixels = () => {
             functionName: "setPixels"
         });
 
+    const { enableWeb3 } = useMoralis();
+
+    useEffect(() => {
+        enableWeb3();
+    }, [enableWeb3])
+
+
 
     const draw = () => {
         const pixels = Array<number>(256);
         pixels.fill(169);
-        runContractFunction({ params: {params: { pixels, plotId }} });
+        runContractFunction({ params: { params: { pixels, plotId }, msgValue: `` } });
     };
 
     return (

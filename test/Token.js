@@ -45,7 +45,7 @@ describe("Token contract", function () {
       expect(await hardhatToken.parcels(0, 0)).to.equal(1);
       expect(await hardhatToken.parcels(2, 0)).to.equal(2);
 
-      console.log(await hardhatToken.tokenURI(1));
+      //console.log(await hardhatToken.tokenURI(1));
 
       const bal1 = await hardhatToken.provider.getBalance(hardhatToken.address);
       //console.log(receipt1)
@@ -79,5 +79,18 @@ describe("Token contract", function () {
       expect(await hardhatToken.provider.getBalance(hardhatToken.address)).to.equal(0);
 
     });
+
+    it("Should draw pixels", async function async () {
+      try {
+        const x = Array(256).fill(169);
+        const plotId1 = await hardhatToken.buyPlot(2, 2, 3, 3, { value: "64" });
+        const plotId2 = await hardhatToken.setPixels(x, 1, { value: "" });
+        const receipt1 = await plotId2.wait();
+        expect(receipt1.events[0].event).to.equal("PlotPixelsSet");
+      } catch(e) {
+        expect('should not error').to.equal(1);
+      }
+    });
+
   });
 });

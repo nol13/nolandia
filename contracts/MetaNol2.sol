@@ -21,7 +21,7 @@ contract Nolandia is ERC721, Ownable, PaymentSplitter /* , ERC721Enumerable, ERC
     //uint256 internal ethFactor = 1000000000000000000;
     uint256 internal ethFactor = 1;
     uint8 pxInParcel = 64;
-    uint8 valsPerPixels = 4;
+    uint8 valsPerPixel = 4;
 
     struct plot {
         uint8 x1;
@@ -92,8 +92,10 @@ contract Nolandia is ERC721, Ownable, PaymentSplitter /* , ERC721Enumerable, ERC
      function setPixels (uint8[] calldata pixels, uint256 plotId) external {
         require(ownerOf(plotId) == msg.sender, "u dont own this");
         plot memory myPlot = plots[plotId];
-        uint32 totalPxInPlot = (myPlot.x2 - myPlot.x1) * (myPlot.y2 - myPlot.y1) * pxInParcel * valsPerPixels;
-        require(totalPxInPlot * pxInParcel == pixels.length, "wrong amount of px");
+        uint32 xdiff = myPlot.x2 - myPlot.x1;
+        uint32 ydiff = myPlot.y2 - myPlot.y1;
+        uint32 totalPxInPlot = (xdiff * ydiff * pxInParcel * valsPerPixel);
+        require(totalPxInPlot == pixels.length, "wrong amount of px");
         emit PlotPixelsSet(plotId, pixels);
     }
 
