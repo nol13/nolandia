@@ -1,11 +1,11 @@
 const pxPerRow = 1024;
 const valsPerPx = 4;
 
-export interface plotImageDataDto {
+/* export interface plotImageDataDto {
     plotData: number[],
     rowStartingPositions: number[],
     plotWidthInPx: number
-}
+} */
 
 export interface plot {
     plotId: number,
@@ -18,6 +18,7 @@ export interface plot {
 export interface plotImgData {
     plotId: number,
     imageData: number[]
+    updatedTime?: number
 }
 
 export interface combinedPlot {
@@ -29,7 +30,8 @@ export interface combinedPlot {
     owner?: string,
     imageData?: number[],
     plotWidthInPx: number,
-    rowStartingPositions: number[]
+    rowStartingPositions: number[],
+    updatedTime?: number
 }
 
 export interface combinedPlotData {
@@ -71,7 +73,13 @@ export const combineAndProcessPlotData = (plots: plot[], plotImageData: plotImgD
     }, {});
 
     for (const plotImgObj of plotImageData) {
-        if (plotData[plotImgObj.plotId]) plotData[plotImgObj.plotId].imageData = plotImgObj.imageData;
+        const data = plotData[plotImgObj.plotId]
+        if (data) {
+            if (!data.updatedTime || data.updatedTime < (plotImgObj?.updatedTime || Infinity)) {
+                data.imageData = plotImgObj.imageData;
+                data.updatedTime = plotImgObj.updatedTime
+            }
+        }
     }
 
     return plotData;

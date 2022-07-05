@@ -13,24 +13,70 @@ const networks =[ {
         value: "Mumbai",
   }];
 
+export const connectors = [
+    {
+        title: "Metamask",
+        //icon: Metamask,
+        connectorId: "injected",
+        priority: 1,
+    },
+    {
+        title: "WalletConnect",
+        //icon: WalletConnect,
+        connectorId: "walletconnect",
+        priority: 2,
+    },
+    {
+        title: "Trust Wallet",
+       // icon: TrustWallet,
+        connectorId: "injected",
+        priority: 3,
+    },
+    {
+        title: "MathWallet",
+        //icon: MathWallet,
+        connectorId: "injected",
+        priority: 999,
+    },
+    {
+        title: "TokenPocket",
+        //icon: TokenPocket,
+        connectorId: "injected",
+        priority: 999,
+    },
+    {
+        title: "SafePal",
+        //icon: SafePal,
+        connectorId: "injected",
+        priority: 999,
+    },
+    {
+        title: "Coin98",
+        //icon: Coin98,
+        connectorId: "injected",
+        priority: 999,
+    },
+];
+
+
 export const Home = () => {
 
-    const { authenticate, isAuthenticated, isAuthenticating, user, /* account, */ logout, enableWeb3 } = useMoralis();
+    const { authenticate, isAuthenticated, isAuthenticating, user, /* account, */ logout } = useMoralis();
     const { /* switchNetwork, */ chainId, chain, account, network } = useChain();
 
     const ready = isAuthenticated && chain?.shortName === "maticmum";
 
     const login = async () => {
-        if (!isAuthenticated) {
+        if (!isAuthenticated && !isAuthenticating) {
 
-            await authenticate({ signingMessage: "Log in using Moralis" })
-                .then(function (user) {
-                    //console.log("logged in user:", user);
-                    //console.log(user!.get("ethAddress"));
-                })
-                .catch(function (error) {
-                    console.log(error);
-                });
+            try {
+                const user = await authenticate({ type: 'evm', signingMessage: "Log into nolandia!", provider: "metamask" })
+               //console.log("logged in user:", user);
+               //console.log(user!.get("ethAddress"));
+            } catch (error) {
+                console.log(error);
+            }
+
         }
     }
 
@@ -51,8 +97,8 @@ export const Home = () => {
             {ready && <div style={{ margin: '10px' }}><Link to="yourplots">Your Plots</Link></div>}
             {ready && <div style={{ margin: '10px' }}><Link to="draw">Draw On Your Plot</Link></div>}
             {isAuthenticated && !ready && (
-                <div><br />
-                    <button onClick={() => switchNetwork({chainId: networks[1].key})}> Please switch your network to Polygon Mumbai to use the app</button>
+                <div><br />Please switch your network to Polygon Mumbai to use the app
+                    {/* <button onClick={() => switchNetwork({chainId: networks[1].key})}> Please switch your network to Polygon Mumbai to use the app</button> */}
                 </div>
             )}
         </div>
