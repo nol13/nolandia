@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import React, { useMemo } from "react";
 import { useMoralisQuery } from "react-moralis";
 import { combineAndProcessPlotData, getPlotImageData } from "../../utils/imageDataUtils";
 

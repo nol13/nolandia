@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useWeb3Contract, useWeb3ExecuteFunction, useMoralis } from "react-moralis";
 import NolandiaAbi from '../../contracts/Nolandia.json';
 import contractAddress from "../../contracts/contract-address.json";
@@ -6,7 +6,7 @@ import contractAddress from "../../contracts/contract-address.json";
 
 
 export const MintPlot = () => {
-    const { user, enableWeb3 } = useMoralis();
+    const { user, isWeb3Enabled } = useMoralis();
     const { data, error, runContractFunction, isFetching, isLoading } =
         useWeb3Contract({
             abi: NolandiaAbi.abi,
@@ -25,9 +25,8 @@ export const MintPlot = () => {
     });
 
     useEffect(() => {
-        enableWeb3().then(() => fetch())
-        //fetch();
-    }, [fetch, enableWeb3])
+        isWeb3Enabled && fetch()
+    }, [isWeb3Enabled])
 
     //console.log(isInitializing)
  
