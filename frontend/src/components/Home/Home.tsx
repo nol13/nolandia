@@ -1,17 +1,18 @@
-import { switchNetwork } from '@wagmi/core';
 import React from 'react';
 import { useMoralis } from "react-moralis";
 import { useChain } from "react-moralis";
 import { Link } from "react-router-dom";
 
-const networks =[ {
-    key: 0x89,
+import { Nolandia } from '../Nolandia/Nolandia';
+
+const networks = [{
+    key: "0x89",
     value: "Polygon",
 },
-    {
-        key: 0x13881,
-        value: "Mumbai",
-  }];
+{
+    key: "0x13881",
+    value: "Mumbai",
+}];
 
 export const connectors = [
     {
@@ -28,7 +29,7 @@ export const connectors = [
     },
     {
         title: "Trust Wallet",
-       // icon: TrustWallet,
+        // icon: TrustWallet,
         connectorId: "injected",
         priority: 3,
     },
@@ -62,7 +63,7 @@ export const connectors = [
 export const Home = () => {
 
     const { authenticate, isAuthenticated, isAuthenticating, user, /* account, */ logout } = useMoralis();
-    const { /* switchNetwork, */ chainId, chain, account, network } = useChain();
+    const { switchNetwork, chainId, chain, account, network } = useChain();
 
     const ready = isAuthenticated && chain?.shortName === "maticmum";
 
@@ -70,9 +71,10 @@ export const Home = () => {
         if (!isAuthenticated && !isAuthenticating) {
 
             try {
-                const user = await authenticate({ type: 'evm', signingMessage: "Log into nolandia!", provider: "metamask" })
-               //console.log("logged in user:", user);
-               //console.log(user!.get("ethAddress"));
+                //const user = 
+                await authenticate({ signingMessage: "Log into nolandia!" })
+                //console.log("logged in user:", user);
+                //console.log(user!.get("ethAddress"));
             } catch (error) {
                 console.log(error);
             }
@@ -97,10 +99,14 @@ export const Home = () => {
             {ready && <div style={{ margin: '10px' }}><Link to="yourplots">Your Plots</Link></div>}
             {ready && <div style={{ margin: '10px' }}><Link to="draw">Draw On Your Plot</Link></div>}
             {isAuthenticated && !ready && (
-                <div><br />Please switch your network to Polygon Mumbai to use the app
-                    {/* <button onClick={() => switchNetwork({chainId: networks[1].key})}> Please switch your network to Polygon Mumbai to use the app</button> */}
+                <div>
+                    <br />
+                    Please switch your network to Polygon Mumbai to use the app.
+                    <br /><br />
+                    <button onClick={() => switchNetwork(networks[1].key)}>Switch to Mumbai</button>
                 </div>
             )}
+            <Nolandia />
         </div>
     );
 };

@@ -6,8 +6,8 @@ import { PlotDataContext, PlotDataContextType } from "../App/App";
 export const ListPlots = () => {
     const {
         mintData,
-        pixelData,
-        imageData,
+        //pixelData,
+        //imageData,
         mintError,
         mintsLoading,
         pixelError,
@@ -38,7 +38,7 @@ export const ListPlots = () => {
                     </div>
                 );
             })}
-            <h1>Image Data Set</h1>
+            {/* <h1>Image Data Set</h1>
             {pixelData?.map(plot => {
                 return (
                     <div key={plot.get("plotId")} style={{ padding: "10px", border: "1px solid blue", margin: "10px" }}>
@@ -47,6 +47,6 @@ export const ListPlots = () => {
                     </div>
                 );
             })}
-            <div style={{ padding: "10px", border: "1px solid green", margin: "10px", maxWidth: '100%' }}>{imageData?.toString()}</div>
+            <div style={{ padding: "10px", border: "1px solid green", margin: "10px", maxWidth: '100%' }}>{imageData?.toString()}</div> */}
         </div>);
 };
