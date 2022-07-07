@@ -1,14 +1,8 @@
 const pxPerRow = 1024;
 const valsPerPx = 4;
 
-/* export interface plotImageDataDto {
-    plotData: number[],
-    rowStartingPositions: number[],
-    plotWidthInPx: number
-} */
-
 export interface plot {
-    plotId: number,
+    plotId: string,
     x1: number,
     y1: number,
     x2: number,
@@ -22,7 +16,7 @@ export interface plotImgData {
 }
 
 export interface combinedPlot {
-    plotId: number,
+    plotId: string,
     x1: number,
     y1: number,
     x2: number,
@@ -41,12 +35,13 @@ export interface combinedPlotData {
 const getArrayPos = (x: number, y: number): number => {
     const pxFromRowsAbove = pxPerRow * y;
     const pxFromSameRow = pxPerRow - (pxPerRow - x);
-    return (pxFromRowsAbove + pxFromSameRow) * valsPerPx;
+    return ((pxFromRowsAbove + pxFromSameRow) * valsPerPx);
 }
 
 const getPositionsForRowStart = (x1: number, y1: number, x2: number, y2: number): Array<number> => {
     const startX = x1 * 8;
     const startY = y1 * 8;
+   
     const height = (y2 - y1) * 8;
     const positions: number[] = [];
 
@@ -93,11 +88,11 @@ export const getPlotImageData = (
     for (let i = 0; i < plots.length; i++) {
         const { imageData, rowStartingPositions, plotWidthInPx } = plots[i];
         for (let j = 0; j < rowStartingPositions.length; j++) {
-            const start1 = j * plotWidthInPx * valsPerPx;
-            const end = (j + 1) * plotWidthInPx * valsPerPx;
-            const row = imageData?.slice(start1, end) || [];
-            const start = rowStartingPositions[j];
-            fullImageData.splice(start, 0, ...row);
+            const plotDataStart = j * plotWidthInPx * valsPerPx;
+            const plotDataEnd = (j + 1) * plotWidthInPx * valsPerPx;
+            const row = imageData?.slice(plotDataStart, plotDataEnd) || [];
+            const fullDataStart = rowStartingPositions[j];
+            fullImageData.splice(fullDataStart, row.length, ...row);
         }
     }
     return fullImageData;

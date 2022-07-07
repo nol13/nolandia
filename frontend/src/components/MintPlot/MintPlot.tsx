@@ -63,7 +63,7 @@ export const MintPlot = () => {
             <div>x1: <input value={x1} onChange={e => setX1(e.target.value)} /></div>
             <div>y1: <input value={y1} onChange={e => setY1(e.target.value)} /></div>
             <div>x2: <input value={x2} onChange={e => setX2(e.target.value)} /></div>
-            <div>x2: <input value={y2} onChange={e => setY2(e.target.value)} /></div>
+            <div>y2: <input value={y2} onChange={e => setY2(e.target.value)} /></div>
             <div><button disabled={isFetching || isLoading} onClick={mint}>Mint!</button></div>
             <div>data: {JSON.stringify(data)}</div>
             <div>mint error: {JSON.stringify(error)}</div>
