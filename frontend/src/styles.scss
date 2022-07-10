@@ -1,0 +1,30 @@
+@import "variables";
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  outline: none;
+}
+
+body {
+  font-family: $main-font;
+  font-size: $standard-fz;
+}
+
+button {
+  font-family: $main-font;
+  font-size: $standard-fz;
+  border: none;
+
+  &:hover,
+  &:focus,
+  &:active {
+    outline: none;
+    border: none;
+  }
+}
+
+a {
+  text-decoration: none;
+}
