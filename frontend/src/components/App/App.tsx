@@ -58,8 +58,7 @@ export const App = () => {
 
     const combinedProcessedData = useMemo(() => {
         if (!mappedPlotData || !mappedPixelData) return {};
-        const combined = combineAndProcessPlotData(mappedPlotData, mappedPixelData);
-        return combined
+        return combineAndProcessPlotData(mappedPlotData, mappedPixelData);
     }, [mappedPixelData, mappedPlotData]);
 
     const imageData = useMemo(() => {
@@ -68,8 +67,6 @@ export const App = () => {
     }, [combinedProcessedData]);
 
     const ready = isAuthenticated && chain?.shortName === "maticmum";
-
-
 
     return (
         <div className="App">

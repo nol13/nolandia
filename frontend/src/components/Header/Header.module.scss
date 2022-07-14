@@ -1,0 +1,22 @@
+@import '../../variables';
+@import '../../global';
+
+.header {
+  padding: 15px 0;
+  box-shadow: $main-shadow;
+  margin-bottom: 15px;
+}
+
+.container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  font-family: $custom-font;
+  font-size: $logo-size;
+  color: #7B3FE4;
+}
+
+

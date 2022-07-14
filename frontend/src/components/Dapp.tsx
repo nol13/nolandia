@@ -3,6 +3,7 @@ import { MoralisProvider } from "react-moralis";
 import { BrowserRouter } from "react-router-dom";
 import { App } from './App/App';
 
+import '../styles.scss';
 
 export const Dapp = () => {
   return (
