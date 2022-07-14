@@ -1,8 +1,21 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useWeb3Contract, useWeb3ExecuteFunction, useMoralis } from "react-moralis";
 import NolandiaAbi from '../../contracts/Nolandia.json';
 import contractAddress from "../../contracts/contract-address.json";
+import { PlotDataContextType, PlotDataContext } from "../App/App";
+import styles from './MintPlot.module.css';
 //  "Nolandia": "0x4A5B2494CBae765766684dC7F58fF381f2C756B4"
+
+type ParcelProps = {
+    x: number,
+    y: number,
+    owned: boolean,
+    onClick: (x: number, y: number, owned: boolean) => void
+}
+const Parcel = ({x, y, owned, onClick}: ParcelProps) => {
+    //console.log(x, y)
+    return (<div style={{backgroundColor: owned ? "blue" : "white", height: '8px'}} onClick={() => onClick(x, y, owned)}>.</div>)
+}
 
 
 export const MintPlot = () => {
@@ -29,6 +42,10 @@ export const MintPlot = () => {
     }, [isWeb3Enabled])
 
     //console.log(isInitializing)
+
+    const {
+        mappedPlotData
+    } = useContext<PlotDataContextType>(PlotDataContext);
  
     
     const [x1, setX1] = useState<string>("");
@@ -56,7 +73,33 @@ export const MintPlot = () => {
             runContractFunction({ params: options }).then(() => fetch());
         }
     };
-    //console.log(bError)
+
+    const selectParcel = (x: number, y: number, owned: boolean) => { console.log(x, y, owned); return; }
+
+    const parcelsOwned = Array(128); //.fill(Array<boolean>(128));
+    const parcelDivs = []; //Array(128).fill(Array(128));
+    if (mappedPlotData) {
+        for (const plot of mappedPlotData) {
+            const {x1, x2, y1, y2 } = plot;
+            //console.log(plot)
+            for (let i = y1; i < y2; i++) {
+                const row = [...parcelsOwned[i]]
+                for (let j = x1; j < x2; j++) {
+                    //console.log(i, j)
+                    row[j] = true;
+                }
+                parcelsOwned[i] = row;
+            }
+        }
+    }
+    
+
+    for (let ii = 0; ii < 128; ii++) {
+        for (let j = 0; j < 128; j++) {
+            parcelDivs.push({ x: ii, y: j, owned: parcelsOwned[ii][j] });
+        }
+    }
+
     return (
         <div style={{padding: '10px', border: '1px solid black'}}>
             <h1>Mint New Plot</h1>
@@ -69,7 +112,9 @@ export const MintPlot = () => {
             <div>mint error: {JSON.stringify(error)}</div>
             <div>you own: {JSON.stringify(balanceData)} plots</div>
             <div>balance check error: {JSON.stringify(bError)}</div>
-           
+           {/* <div className={styles.plotGrid}>
+                {parcelDivs.map(parcel => <Parcel key={`x${parcel.x}-y${parcel.y}`} x={parcel.x} y={parcel.y} owned={parcel.owned} onClick={selectParcel} />)}
+           </div> */}
         </div>
     )
 };

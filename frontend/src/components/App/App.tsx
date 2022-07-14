@@ -78,7 +78,7 @@ export const App = () => {
                 pixelData,
                 imageData,
                 //mappedPixelData,
-                //mappedPlotData,
+                mappedPlotData,
                 mintError,
                 mintsLoading,
                 pixelError,

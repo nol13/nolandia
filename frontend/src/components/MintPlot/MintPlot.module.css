@@ -1,0 +1,9 @@
+.plotGrid {
+    display: grid;
+    grid-template-columns: repeat(128, 1fr);
+    width: 1024px;
+}
+
+.plotGrid div {
+    height: 8px;
+}
