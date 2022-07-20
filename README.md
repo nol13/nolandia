@@ -1,9 +1,5 @@
 # Hardhat Hackathon Boilerplate
 
-This repository contains a sample project that you can use as the starting point
-for your Ethereum project. It's also a great fit for learning the basics of
-smart contract development.
-
 This project is intended to be used with the
 [Hardhat Beginners Tutorial](https://hardhat.org/tutorial), but you should be
 able to follow it by yourself by reading the README and exploring its
@@ -15,30 +11,28 @@ The first things you need to do are cloning this repository and installing its
 dependencies:
 
 ```sh
-git clone https://github.com/nomiclabs/hardhat-hackathon-boilerplate.git
-cd hardhat-hackathon-boilerplate
-npm install
+git clone https://github.com/nol13/nolandia.git
+npm run init
 ```
 
 Once installed, let's run Hardhat's testing network:
 
 ```sh
-npx hardhat node
+npm run network
 ```
 
 Then, on a new terminal, go to the repository's root folder and run this to
 deploy your contract:
 
 ```sh
-npx hardhat run scripts/deploy.js --network localhost
+npm run deploy-contract
 ```
 
-Finally, we can run the frontend with:
+Or can deploy contract and run frontend.
+Run command from root folder:
 
 ```sh
-cd frontend
-npm install
-npm start
+npm run dev
 ```
 
 > Note: There's [an issue in `ganache-core`](https://github.com/trufflesuite/ganache-core/issues/650) that can make the `npm install` step fail. 
