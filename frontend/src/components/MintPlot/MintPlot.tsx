@@ -1,21 +1,10 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, {useState, useEffect, useContext, useRef} from "react";
 import { useWeb3Contract, useWeb3ExecuteFunction, useMoralis } from "react-moralis";
 import NolandiaAbi from '../../contracts/Nolandia.json';
 import contractAddress from "../../contracts/contract-address.json";
 import { PlotDataContextType, PlotDataContext } from "../App/App";
-import styles from './MintPlot.module.css';
+// import styles from './MintPlot.module.css';
 //  "Nolandia": "0x4A5B2494CBae765766684dC7F58fF381f2C756B4"
-
-type ParcelProps = {
-    x: number,
-    y: number,
-    owned: boolean,
-    onClick: (x: number, y: number, owned: boolean) => void
-}
-const Parcel = ({x, y, owned, onClick}: ParcelProps) => {
-    //console.log(x, y)
-    return (<div style={{backgroundColor: owned ? "blue" : "white", height: '8px'}} onClick={() => onClick(x, y, owned)}>.</div>)
-}
 
 
 export const MintPlot = () => {
@@ -27,7 +16,6 @@ export const MintPlot = () => {
             functionName: "buyPlot"
         });
 
-    //const balance = runContractFunction({params: {}})
     const { data: balanceData, error: bError, fetch, /* isFetching, isLoading */ } = useWeb3ExecuteFunction({
         abi: NolandiaAbi.abi,
         contractAddress: contractAddress.Nolandia,
@@ -39,13 +27,62 @@ export const MintPlot = () => {
 
     useEffect(() => {
         isWeb3Enabled && fetch()
-    }, [isWeb3Enabled])
+    }, [isWeb3Enabled]);
 
-    //console.log(isInitializing)
+    const [parcelsOwned, setParcelsOwned] = useState<boolean[][]>();
+
+    const plotGridRef = useRef<HTMLCanvasElement>(null);
 
     const {
         mappedPlotData
     } = useContext<PlotDataContextType>(PlotDataContext);
+
+    useEffect(() => {
+        if (mappedPlotData) {
+            const newParcelsOwned = Array(128).map(() => Array(128));
+            for (const plot of mappedPlotData) {
+                const {x1, x2, y1, y2 } = plot;
+                for (let i = y1; i < y2; i++) {
+                    const row = newParcelsOwned[i] ? newParcelsOwned[i] : Array(128);
+                    for (let j = x1; j < x2; j++) {
+                        row[j] = true;
+                    }
+                    newParcelsOwned[i] = row;
+                }
+            }
+            setParcelsOwned(newParcelsOwned)
+        }
+    }, [mappedPlotData]);
+
+    useEffect(() => {
+        if (parcelsOwned && plotGridRef.current) {
+            const ctx = plotGridRef.current.getContext("2d");
+            if (!ctx) return;
+            parcelsOwned.forEach((row, i) => {
+                row.forEach((parcelVal, j) => {
+                    if (parcelVal) {
+                        ctx.fillStyle = '#663300';
+                        ctx.fillRect(i * 8, j * 8, 8, 8);
+                    }
+                })
+            })
+        }
+    }, [parcelsOwned, plotGridRef.current]);
+
+    const selectParcel = (event: React.MouseEvent<HTMLCanvasElement>) => {
+        const {clientX, clientY} = event;
+        const ctx = plotGridRef.current?.getContext("2d");
+        if (ctx && plotGridRef.current) {
+            const { left, top } = plotGridRef.current.getBoundingClientRect();
+            const x = clientX - left;
+            const y = clientY - top;
+            const plotX = Math.floor(x / 8);
+            const plotY = Math.floor(y / 8);
+            ctx.fillStyle = '#b233a1';
+            ctx.fillRect(plotX * 8, plotY * 8, 8, 8);
+        }
+    }
+
  
     
     const [x1, setX1] = useState<string>("");
@@ -74,32 +111,6 @@ export const MintPlot = () => {
         }
     };
 
-    const selectParcel = (x: number, y: number, owned: boolean) => { console.log(x, y, owned); return; }
-
-    const parcelsOwned = Array(128); //.fill(Array<boolean>(128));
-    const parcelDivs = []; //Array(128).fill(Array(128));
-    if (mappedPlotData) {
-        for (const plot of mappedPlotData) {
-            const {x1, x2, y1, y2 } = plot;
-            //console.log(plot)
-            for (let i = y1; i < y2; i++) {
-                const row = [...parcelsOwned[i]]
-                for (let j = x1; j < x2; j++) {
-                    //console.log(i, j)
-                    row[j] = true;
-                }
-                parcelsOwned[i] = row;
-            }
-        }
-    }
-    
-
-    for (let ii = 0; ii < 128; ii++) {
-        for (let j = 0; j < 128; j++) {
-            parcelDivs.push({ x: ii, y: j, owned: parcelsOwned[ii][j] });
-        }
-    }
-
     return (
         <div style={{padding: '10px', border: '1px solid black'}}>
             <h1>Mint New Plot</h1>
@@ -112,9 +123,7 @@ export const MintPlot = () => {
             <div>mint error: {JSON.stringify(error)}</div>
             <div>you own: {JSON.stringify(balanceData)} plots</div>
             <div>balance check error: {JSON.stringify(bError)}</div>
-           {/* <div className={styles.plotGrid}>
-                {parcelDivs.map(parcel => <Parcel key={`x${parcel.x}-y${parcel.y}`} x={parcel.x} y={parcel.y} owned={parcel.owned} onClick={selectParcel} />)}
-           </div> */}
+            <canvas width="1024" height="1024"  ref={plotGridRef} id="nolandiaCanvas" onClick={selectParcel}/>
         </div>
     )
 };
