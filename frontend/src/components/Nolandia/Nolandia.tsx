@@ -1,5 +1,4 @@
 import React, { useContext, useEffect, useRef } from 'react';
-// @ts-ignore
 import paper from 'paper';
 
 import { PlotDataContextType, PlotDataContext } from '../App/App';
