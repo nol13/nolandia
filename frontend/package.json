@@ -15,7 +15,6 @@
     "ethers": "^5.6.8",
     "moralis": "^1.8.0",
     "node-sass": "^7.0.1",
-    "nolandia": "file:..",
     "react": "18.1.0",
     "react-dom": "18.1.0",
     "react-moralis": "^1.4.0",
