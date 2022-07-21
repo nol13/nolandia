@@ -10,6 +10,8 @@ module.exports = {
     ],
     rules: {
         "no-empty-function": "off",
-        "@typescript-eslint/no-empty-function": ["error", { "allow": ["arrowFunctions"] }]
+        "@typescript-eslint/ban-ts-ignore": "off",
+        "@typescript-eslint/ban-ts-comment": "off",
+        "@typescript-eslint/no-empty-function": ["error", { "allow": ["arrowFunctions"] }],
     }
 };
