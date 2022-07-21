@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 
 import { Nolandia } from '../Nolandia/Nolandia';
 import Header from '../Header/Header';
+import Footer from '../Footer/Footer';
 
 const networks = [{
     key: "0x89",
@@ -106,6 +107,7 @@ export const Home = () => {
                 </div>
             )}
             <Nolandia />
+            <Footer />
         </>
     );
 };
