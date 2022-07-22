@@ -34,11 +34,12 @@ export const Nolandia = () => {
 
         const length = ctxImageData?.data?.length || 0;
         for (let i = 0; i < length - 4; i += 4) {
-            ctxImageData.data[i + 0] = imageData[i + 0];
-            ctxImageData.data[i + 1] = imageData[i + 1];
-            ctxImageData.data[i + 2] = imageData[i + 2];
-            ctxImageData.data[i + 3] = imageData[i + 3];
-
+            if (imageData) {
+                ctxImageData.data[i + 0] = imageData[i + 0];
+                ctxImageData.data[i + 1] = imageData[i + 1];
+                ctxImageData.data[i + 2] = imageData[i + 2];
+                ctxImageData.data[i + 3] = imageData[i + 3];
+            }
         }
         raster.setImageData(ctxImageData, new paper.Point(0, 0));
         raster.position = paper.view.center;
