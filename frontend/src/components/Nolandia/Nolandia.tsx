@@ -1,37 +1,86 @@
-import React, {useContext, useMemo, useRef} from 'react';
+import React, { useContext, useEffect, useRef } from 'react';
+import paper from 'paper';
+
 import { PlotDataContextType, PlotDataContext } from '../App/App';
+
+import styles from './Nolandia.module.scss';
 
 export const Nolandia = () => {
     const { imageData } = useContext<PlotDataContextType>(PlotDataContext);
-    const nolandiaRef = useRef<HTMLCanvasElement>(null);
+    const canvasRef = useRef<HTMLCanvasElement>(null);
 
-   useMemo(() => {
-        if (!imageData?.length || !nolandiaRef.current) return;
-        const canvas = nolandiaRef.current;
+    useEffect(() => {
+        if (!imageData?.length || !canvasRef.current) return;
+        const canvas = canvasRef.current;
         const ctx = canvas.getContext('2d');
+
+        paper.setup(canvas);
+
         if (ctx === null) return;
-        const ctxImageData = ctx.createImageData(1024, 1024);
-        //ctxImageData.data = Uint8ClampedArray.from(imageData)
+
+        initCanvas(ctx);
+    }, [imageData])
+
+    function initCanvas(ctx: CanvasRenderingContext2D) {
+        const tool = new paper.Tool();
+        const raster = new paper.Raster({
+            size: {
+                width: 1024,
+                height: 1024
+            }
+        });
+
+        const ctxImageData = raster.createImageData(new paper.Size(1024, 1024));
+
         const length = ctxImageData?.data?.length || 0;
         for (let i = 0; i < length - 4; i += 4) {
             ctxImageData.data[i + 0] = imageData[i + 0];
             ctxImageData.data[i + 1] = imageData[i + 1];
             ctxImageData.data[i + 2] = imageData[i + 2];
             ctxImageData.data[i + 3] = imageData[i + 3];
-            
+
         }
-        ctx.putImageData(ctxImageData, 0, 0);
+        raster.setImageData(ctxImageData, new paper.Point(0, 0));
+        raster.position = paper.view.center;
 
+        tool.onMouseDrag = function(event: any) {
+            const pan_offset = event.point.subtract(event.downPoint);
+            paper.view.center = paper.view.center.subtract(pan_offset);
+        }
+    }
 
-    }, [imageData])
+    const handleWheel = (event: React.WheelEvent) => {
+        const oldZoom = paper.view.zoom;
+        let newZoom = paper.view.zoom;
+
+        if (event.deltaY > 0) {
+            newZoom = paper.view.zoom * 1.05;
+        } else {
+            newZoom = paper.view.zoom * 0.95;
+        }
+
+        const beta = oldZoom / newZoom;
+        const mousePosition = new paper.Point(event.nativeEvent.offsetX, event.nativeEvent.offsetY);
+
+        const viewPosition = paper.view.viewToProject(mousePosition);
+
+        const mpos = viewPosition;
+        const ctr = paper.view.center;
+
+        const pc = mpos.subtract(ctr);
+        const offset = mpos.subtract(pc.multiply(beta)).subtract(ctr);
+
+        paper.view.zoom = newZoom;
+        paper.view.center = paper.view.center.add(offset);
+    }
 
     if (!imageData?.length) return (<div>Loading Nolandia...</div>);
+
     return (
-    <div style={{border: '1px solid black', display: 'inline-block'}}>
-        <div>Nolandia!</div>
-        <hr />
-        {!imageData?.length && (<div>Loading Nolandia...</div>)}
-        <canvas width="1024" height="1024"  ref={nolandiaRef} id="nolandiaCanvas"/>
-        </div>)
+        <div>
+            {!imageData?.length && (<div>Loading Nolandia...</div>)}
+            <canvas data-paper-resize="true" onWheel={handleWheel} ref={canvasRef} id={styles.canvas} />
+        </div>
+    )
 
 }

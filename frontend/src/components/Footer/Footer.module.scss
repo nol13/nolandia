@@ -1,0 +1,12 @@
+@import '../../variables';
+@import '../../global';
+
+.footer {
+  font-size: 12px;
+  position: absolute;
+  width: 100%;
+  padding: 15px 0;
+  box-shadow: $main-shadow;
+  bottom: 0;
+}
+

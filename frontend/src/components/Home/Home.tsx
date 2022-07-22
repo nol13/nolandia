@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 
 import { Nolandia } from '../Nolandia/Nolandia';
 import Header from '../Header/Header';
+import Footer from '../Footer/Footer';
 
 const networks = [{
     key: "0x89",
@@ -91,12 +92,12 @@ export const Home = () => {
     return (
         <>
             <Header login={login} logout={logOut} isAuth={isAuthenticated || isAuthenticating} />
-            <div>{account || ''} {chain?.name || ''} {chainId || ""} {network || ""}</div>
-            <h1>{isAuthenticated && 'Authenticated '}Hello Wyrld!</h1>
-            <p>Welcome to Nolandia {user?.get("ethAddress")}!</p>
-            {ready && <div style={{ margin: '10px' }}><Link to="buyplot">Buy Plot</Link></div>}
-            {ready && <div style={{ margin: '10px' }}><Link to="yourplots">Your Plots</Link></div>}
-            {ready && <div style={{ margin: '10px' }}><Link to="draw">Draw On Your Plot</Link></div>}
+            {/*<div>{account || ''} {chain?.name || ''} {chainId || ""} {network || ""}</div>*/}
+            {/*<h1>{isAuthenticated && 'Authenticated '}Hello Wyrld!</h1>*/}
+            {/*<p>Welcome to Nolandia {user?.get("ethAddress")}!</p>*/}
+            {/*{ready && <div style={{ margin: '10px' }}><Link to="buyplot">Buy Plot</Link></div>}*/}
+            {/*{ready && <div style={{ margin: '10px' }}><Link to="yourplots">Your Plots</Link></div>}*/}
+            {/*{ready && <div style={{ margin: '10px' }}><Link to="draw">Draw On Your Plot</Link></div>}*/}
             {isAuthenticated && !ready && (
                 <div>
                     <br />
@@ -106,6 +107,7 @@ export const Home = () => {
                 </div>
             )}
             <Nolandia />
+            <Footer />
         </>
     );
 };
