@@ -2,17 +2,19 @@
 
 #canvas {
   background: rgba(123, 63, 228, .05);
-  border-radius: 6px;
-  width: 100vw;
-  height: calc(100vh - 70px);
+  //border-radius: 6px;
+  //width: 100vw;
+  border: 1px solid black;
+  height: calc(100vh - 140px);
+  width: calc(100vh - 140px);
   box-shadow: 6px 6px 25px rgba(0, 0, 0, .1);
   padding: 0;
   margin: auto;
   display: block;
-  position: absolute;
-  top: 70px;
-  bottom: 0;
-  left: 0;
-  right: 0;
+  position: relative;
+  //top: 70px;
+  //bottom: 0;
+  //left: 0;
+  //right: 0;
   cursor: grab;
 }
