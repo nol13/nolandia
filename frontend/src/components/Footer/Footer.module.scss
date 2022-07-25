@@ -2,11 +2,36 @@
 @import '../../global';
 
 .footer {
-  font-size: 12px;
+  font-size: 15px;
   position: absolute;
+  padding: 5px;
   width: 100%;
-  padding: 15px 0;
   box-shadow: $main-shadow;
   bottom: 0;
 }
 
+.copyright {
+  text-align: center;
+}
+.rulesPopup {
+  position: absolute;
+  font-size: 15px;
+}
+
+.rulesPopup > button {
+  color: #7B3FE4;
+}
+
+.rulesContent {
+  margin: auto;
+  background: rgb(255, 255, 255);
+  width: 50%;
+  padding: 5px;
+  border: 1px solid #d7d7d7;
+  border-radius: 25px;
+}
+
+.rulesContent > h2 {
+text-align: center;
+color: #7B3FE4;
+}
