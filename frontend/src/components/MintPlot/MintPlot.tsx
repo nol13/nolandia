@@ -6,6 +6,49 @@ import { PlotDataContextType, PlotDataContext } from "../App/App";
 // import styles from './MintPlot.module.css';
 //  "Nolandia": "0x4A5B2494CBae765766684dC7F58fF381f2C756B4"
 
+interface Point {
+    x: number,
+    y: number
+}
+
+interface PointPair {
+    x1: number,
+    x2: number,
+    y1: number,
+    y2: number
+}
+
+const getCoordsFromPoints = (xp1: number, xp2: number, yp1: number, yp2: number): PointPair => {
+
+    let x1 = 0;
+    let x2 = 0;
+    let y1 = 0;
+    let y2 = 0;
+
+    if (xp1 <= xp2 && yp1 <= yp2) {
+        x1 = xp1;
+        x2 = xp2;
+        y1 = yp1;
+        y2 = yp2;
+    } else if (xp1 <= xp2 && yp1 > yp2) {
+        x1 = xp1;
+        x2 = xp2;
+        y1 = yp2;
+        y2 = yp1;
+    } else if (xp1 > xp2 && yp1 <= yp2) {
+        x1 = xp2;
+        x2 = xp1;
+        y1 = yp1;
+        y2 = yp2;
+    } else if (xp1 > xp2 && yp1 > yp2) {
+        x1 = xp2;
+        x2 = xp1;
+        y1 = yp2;
+        y2 = yp1;
+    }
+
+    return {x1, x2, y1, y2};
+};
 
 export const MintPlot = () => {
     const { user, isWeb3Enabled } = useMoralis();
@@ -24,6 +67,9 @@ export const MintPlot = () => {
             owner: user?.get("ethAddress")
         },
     });
+
+    const [point1, setPoint1] = useState<Point>();
+    const [point2, setPoint2] = useState<Point>();
 
     useEffect(() => {
         isWeb3Enabled && fetch()
@@ -56,20 +102,59 @@ export const MintPlot = () => {
 
     useEffect(() => {
         if (parcelsOwned && plotGridRef.current) {
-            const ctx = plotGridRef.current.getContext("2d");
-            if (!ctx) return;
-            parcelsOwned.forEach((row, i) => {
-                row.forEach((parcelVal, j) => {
-                    if (parcelVal) {
-                        ctx.fillStyle = '#663300';
-                        ctx.fillRect(i * 8, j * 8, 8, 8);
-                    }
-                })
-            })
+            paintOwned();
         }
     }, [parcelsOwned, plotGridRef.current]);
 
+    useEffect(() => {
+        const ctx = plotGridRef.current?.getContext("2d");
+        if (ctx && plotGridRef.current) {
+            if (point1 && !point2) {
+                ctx.clearRect(0, 0, plotGridRef.current.width, plotGridRef.current.height);
+                paintOwned();
+                const { x, y } = point1;
+                if (!parcelsOwned?.[y]?.[x]) {
+                    ctx.fillStyle = '#b233a1';
+                    ctx.fillRect(x * 8, y * 8, 8, 8);
+                } else {
+                    setPoint1(undefined);
+                }
+
+            } else if (point1 && point2) {
+                const {x: xp1, y: yp1} = point1;
+                const {x: xp2, y: yp2} = point2;
+
+                if (xp1 === xp2 && yp1 === yp2) {
+                    setPoint2(undefined);
+                    return;
+                } else  {
+                   const {x1, x2, y1, y2} = getCoordsFromPoints(xp1, xp2, yp1, yp2);
+
+                    ctx.clearRect(0, 0, plotGridRef.current.width, plotGridRef.current.height);
+                    paintOwned();
+                    for (let i = x1; i <= x2; i++) {
+                        for (let j = y1; j <= y2; j++) {
+                            if (parcelsOwned?.[j]?.[i]) {
+                                ctx.clearRect(0, 0, plotGridRef.current.width, plotGridRef.current.height);
+                                paintOwned();
+                                setPoint1(undefined);
+                                setPoint2(undefined);
+                                return;
+                            }
+                            ctx.fillStyle = '#b233a1';
+                            ctx.fillRect(i * 8, j * 8, 8, 8);
+                        }
+                    }
+                    setPoint1(undefined);
+                    setPoint2(undefined);
+               }
+            }
+
+        }
+    }, [point1, point2, parcelsOwned]);
+
     const selectParcel = (event: React.MouseEvent<HTMLCanvasElement>) => {
+
         const {clientX, clientY} = event;
         const ctx = plotGridRef.current?.getContext("2d");
         if (ctx && plotGridRef.current) {
@@ -78,10 +163,27 @@ export const MintPlot = () => {
             const y = clientY - top;
             const plotX = Math.floor(x / 8);
             const plotY = Math.floor(y / 8);
-            ctx.fillStyle = '#b233a1';
-            ctx.fillRect(plotX * 8, plotY * 8, 8, 8);
+            if (point1) {
+                setPoint2(point1)
+            }
+            setPoint1({x: plotX, y: plotY});
         }
     }
+
+    const paintOwned = () => {
+        if (parcelsOwned && plotGridRef.current) {
+            const ctx = plotGridRef.current.getContext("2d");
+            if (!ctx) return;
+            parcelsOwned.forEach((row, y) => {
+                row.forEach((parcelVal, x) => {
+                    if (parcelVal) {
+                        ctx.fillStyle = '#663300';
+                        ctx.fillRect(x * 8, y * 8, 8, 8);
+                    }
+                })
+            })
+        }
+    };
 
  
     
