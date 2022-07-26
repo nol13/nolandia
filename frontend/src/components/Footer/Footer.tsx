@@ -1,7 +1,6 @@
 import React from 'react';
 import Popup from 'reactjs-popup';
 import styles from './Footer.module.scss';
-//import 'reactjs-popup/dist/index.css';
 
 const Footer = () => {
 
