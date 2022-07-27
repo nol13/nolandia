@@ -8,6 +8,8 @@ import Header from "../Header/Header";
 import Footer from "../Footer/Footer";
 import Navigation from "../Navigation/NavigationBar";
 
+import logo from "../Logo/vers2.svg";
+
 const networks = [
   {
     key: "0x89",
@@ -96,13 +98,15 @@ export const Home = () => {
 
   return (
     <>
-      <Header
-        login={login}
-        logout={logOut}
-        isAuth={isAuthenticated || isAuthenticating}
-      />
       <Navigation>
-        <
+        <Header
+          login={login}
+          logout={logOut}
+          isAuth={isAuthenticated || isAuthenticating}
+        />
+        <img src={logo} className="App-Logo" alt="logo"></img>
+
+        <a className="App-link" href=""></a>
       </Navigation>
       {/*<div>{account || ''} {chain?.name || ''} {chainId || ""} {network || ""}</div>*/}
       {/*<h1>{isAuthenticated && 'Authenticated '}Hello Wyrld!</h1>*/}
@@ -121,6 +125,7 @@ export const Home = () => {
           </button>
         </div>
       )}
+
       <Nolandia />
       <Footer />
     </>
