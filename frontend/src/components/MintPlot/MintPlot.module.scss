@@ -1,0 +1,22 @@
+@import '../../variables';
+@import '../../global';
+
+
+.canvasContainer {
+    display: flex;
+    justify-content: center;
+}
+
+.plotCanvas {
+    border: 1px solid black;
+}
+
+.mintButton {
+    padding: 5px;
+    border-radius: 8px;
+    border: 1px solid $main-color;
+    &:hover, &:active, &:focus {
+        background-color: $bg-color-main;
+        border: 1px solid $main-color;
+    }
+}

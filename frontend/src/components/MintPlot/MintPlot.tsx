@@ -3,7 +3,7 @@ import { useWeb3Contract, useWeb3ExecuteFunction, useMoralis } from "react-moral
 import NolandiaAbi from '../../contracts/Nolandia.json';
 import contractAddress from "../../contracts/contract-address.json";
 import { PlotDataContextType, PlotDataContext } from "../App/App";
-// import styles from './MintPlot.module.css';
+import styles from './MintPlot.module.scss';
 //  "Nolandia": "0x4A5B2494CBae765766684dC7F58fF381f2C756B4"
 
 interface Point {
@@ -71,6 +71,7 @@ export const MintPlot = () => {
     const [point1, setPoint1] = useState<Point>();
     const [point2, setPoint2] = useState<Point>();
     const [showOwnedError, setShowOwnedError] = useState<boolean>();
+    const [numSelected, setNumSelected] = useState<number>(0);
 
     useEffect(() => {
         isWeb3Enabled && fetch()
@@ -115,10 +116,12 @@ export const MintPlot = () => {
                 paintOwned();
                 const { x, y } = point1;
                 if (!parcelsOwned?.[y]?.[x]) {
-                    ctx.fillStyle = '#b233a1';
+                    ctx.fillStyle = '#7B3FE4';
                     ctx.fillRect(x * 8, y * 8, 8, 8);
+                    setNumSelected(1);
                 } else {
                     setPoint1(undefined);
+                    setNumSelected(0);
                     setShowOwnedError(true);
                 }
 
@@ -128,6 +131,7 @@ export const MintPlot = () => {
 
                 if (xp1 === xp2 && yp1 === yp2) {
                     setPoint2(undefined);
+                    setNumSelected(1);
                     return;
                 } else  {
                    const {x1, x2, y1, y2} = getCoordsFromPoints(xp1, xp2, yp1, yp2);
@@ -141,12 +145,14 @@ export const MintPlot = () => {
                                 setPoint1(undefined);
                                 setPoint2(undefined);
                                 setShowOwnedError(true);
+                                setNumSelected(0);
                                 return;
                             }
-                            ctx.fillStyle = '#b233a1';
-                            ctx.fillRect(i * 8, j * 8, 8, 8);
+                            ctx.fillStyle = '#7B3FE4';
+                            ctx.fillRect(i * 8 - 1, j * 8 - 1, 7, 7);
                         }
                     }
+                    setNumSelected((x2 - x1 + 1) * (y2 - y1 + 1));
                }
             }
 
@@ -180,8 +186,8 @@ export const MintPlot = () => {
             parcelsOwned.forEach((row, y) => {
                 row.forEach((parcelVal, x) => {
                     if (parcelVal) {
-                        ctx.fillStyle = '#663300';
-                        ctx.fillRect(x * 8, y * 8, 8, 8);
+                        ctx.fillStyle = '#bf7ff9';
+                        ctx.fillRect(x * 8 + 1, y * 8 + 1, 7, 7);
                     }
                 })
             })
@@ -204,9 +210,7 @@ export const MintPlot = () => {
             }
 
             if (params) {
-                console.log(params)
                 const value = ((params.x2 - params.x1) * (params.y2 - params.y1)) * 64;
-                console.log(value)
                 const stringParams = { x1: params.x1.toString(), y1: params.y1.toString(), x2: params.x2.toString(), y2: params.y2.toString() }
                 const options = {
                     params: stringParams,
@@ -221,14 +225,18 @@ export const MintPlot = () => {
         <div style={{padding: '10px', border: '1px solid black'}}>
             <h1>Mint New Plot</h1>
             <h3>Click once to select one parcel, click again to select multiple parcels.</h3>
-            <div><button disabled={isFetching || isLoading} onClick={mint}>Mint!</button></div>
+            <div>
+                <button className={styles.mintButton} disabled={isFetching || isLoading} onClick={mint}>Mint!</button>
+            </div>
             <div>data: {JSON.stringify(data)}</div>
             <div>mint error: {JSON.stringify(error)}</div>
             <div>you own: {JSON.stringify(balanceData)} plots</div>
             <div>balance check error: {JSON.stringify(bError)}</div>
             {showOwnedError && <div style={{color: 'red'}}>Can't buy owned!</div>}
-            <div>1: {point1?.x}, {point1?.y} 2: {point2?.x}, {point2?.y}</div>
-            <canvas width="1024" height="1024"  ref={plotGridRef} id="nolandiaCanvas" onClick={selectParcel}/>
+            <div>1: {point1?.x}, {point1?.y} 2: {point2?.x}, {point2?.y} - Parcels Selected: {numSelected}</div>
+            <div className={styles.canvasContainer}>
+                <canvas className={styles.plotCanvas} width="1024" height="1024"  ref={plotGridRef} id="nolandiaCanvas" onClick={selectParcel}/>
+            </div>
         </div>
     )
 };
