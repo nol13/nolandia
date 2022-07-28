@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 
 import Home from "../Home/Home.tsx";
 import BuyPlot from "../MintPlot/MintPlot.tsx";
-import YourPlots from "../ListPlots/ListPlots";
+import MyPlots from "../ListPlots/ListPlots";
 import Header from "../Header/Header";
 import Footer from "../Footer/Footer";
 
@@ -14,7 +14,7 @@ function AppRouter() {
       <Routes>
         <Route path="/home" element={<Home></Home>} />
         <Route path="/BuyPlot" element={<BuyPlot></BuyPlot>} />
-        <Route path="/YourPlots" element={<YourPlots></YourPlots>} />
+        <Route path="/MyPlots" element={<MyPlots></MyPlots>} />
       </Routes>
     </BrowserRouter>
   );
