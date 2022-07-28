@@ -8,6 +8,8 @@ import { ListPlots } from "../ListPlots/ListPlots";
 import { MintPlot } from "../MintPlot/MintPlot";
 import { DrawPixels } from "../DrawPixels/DrawPixels";
 import { combineAndProcessPlotData, combinedPlotData, getPlotImageData, plot, plotImgData } from "../../utils/imageDataUtils";
+import Footer from "../Footer/Footer";
+import Header from "../Header/Header";
 
 export const PlotDataContext = React.createContext<PlotDataContextType>({mintError: null, pixelError: null});
 
@@ -27,14 +29,11 @@ export interface PlotDataContextType {
 }
 
 export const App = () => {
-    const { isWeb3Enabled, enableWeb3, isAuthenticated, isWeb3EnableLoading } = useMoralis();
+    const { isWeb3Enabled, enableWeb3, isAuthenticated, isWeb3EnableLoading, logout, isAuthenticating, authenticate } = useMoralis();
     const { chain } = useChain();
 
     const { data: mintData, error: mintError, isLoading: mintsLoading } = useMoralisQuery("Mints3");
     const { data: pixelData, error: pixelError, isLoading: pixelsLoading } = useMoralisQuery("PixelsSet");
-
-    //const pxReady = mintData && pixelData;
-
 
     useEffect(() => {
         if (isAuthenticated && !isWeb3Enabled && !isWeb3EnableLoading) enableWeb3();
@@ -68,6 +67,20 @@ export const App = () => {
 
     const ready = isAuthenticated && chain?.shortName === "maticmum";
 
+    const login = async () => {
+        if (!isAuthenticated && !isAuthenticating) {
+            try {
+                await authenticate({ signingMessage: "Log into nolandia!" })
+            } catch (error) {
+                console.log(error);
+            }
+        }
+    }
+
+    const logOut = async () => {
+        await logout();
+    }
+
     return (
         <div className="App">
             <PlotDataContext.Provider value={{
@@ -82,16 +95,21 @@ export const App = () => {
                 pixelsLoading,
                 combinedProcessedData
                 }}>
-                <Routes>
-                    <Route path="/" element={<Home />} />
-                    {ready && (<>
-                        <Route path="buyplot" element={<MintPlot />} />
-                        <Route path="yourplots" element={<ListPlots />} />
-                        <Route path="draw" element={<DrawPixels />} />
-                    </>
-                    )}
-                    <Route path="*" element={<Home />} />
-                </Routes>
+                <div className="container">
+                    <Header login={login} logout={logOut} isAuth={isAuthenticated || isAuthenticating} />
+
+                    <Routes>
+                        <Route path="/" element={<Home />} />
+                        {ready && (<>
+                            <Route path="buyplot" element={<MintPlot />} />
+                            <Route path="myplots" element={<ListPlots />} />
+                            <Route path="draw" element={<DrawPixels />} />
+                        </>
+                        )}
+                        <Route path="*" element={<Home />} />
+                    </Routes>
+                </div>
+                <Footer />
             </PlotDataContext.Provider>
         </div>
     );

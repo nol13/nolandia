@@ -3,11 +3,10 @@
 
 .footer {
   font-size: 15px;
-  position: absolute;
   padding: 5px;
   width: 100%;
   box-shadow: $main-shadow;
-  bottom: 0;
+  flex-shrink: 0;
 }
 
 .copyright {
@@ -19,7 +18,7 @@
 }
 
 .rulesPopup > button {
-  color: #7B3FE4;
+  color: $main-color;
 }
 
 .rulesContent {
@@ -32,6 +31,6 @@
 }
 
 .rulesContent > h2 {
-text-align: center;
-color: #7B3FE4;
+  text-align: center;
+  color: $main-color;
 }
