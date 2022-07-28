@@ -1,11 +1,9 @@
 import React from 'react';
 import { useMoralis } from "react-moralis";
 import { useChain } from "react-moralis";
-import { Link } from "react-router-dom";
 
 import { Nolandia } from '../Nolandia/Nolandia';
 import Header from '../Header/Header';
-import Footer from '../Footer/Footer';
 
 const networks = [{
     key: "0x89",
@@ -64,40 +62,19 @@ export const connectors = [
 
 export const Home = () => {
 
-    const { authenticate, isAuthenticated, isAuthenticating, user, /* account, */ logout } = useMoralis();
-    const { switchNetwork, chainId, chain, account, network } = useChain();
+    const { isAuthenticated } = useMoralis();
+    const { switchNetwork, chain } = useChain();
 
     const ready = isAuthenticated && chain?.shortName === "maticmum";
 
-    const login = async () => {
-        if (!isAuthenticated && !isAuthenticating) {
-
-            try {
-                //const user =
-                await authenticate({ signingMessage: "Log into nolandia!" })
-                //console.log("logged in user:", user);
-                //console.log(user!.get("ethAddress"));
-            } catch (error) {
-                console.log(error);
-            }
-
-        }
-    }
-
-    const logOut = async () => {
-        await logout();
-        console.log("logged out");
-    }
-
     return (
         <>
-            <Header login={login} logout={logOut} isAuth={isAuthenticated || isAuthenticating} />
             {/*<div>{account || ''} {chain?.name || ''} {chainId || ""} {network || ""}</div>*/}
             {/*<h1>{isAuthenticated && 'Authenticated '}Hello Wyrld!</h1>*/}
             {/*<p>Welcome to Nolandia {user?.get("ethAddress")}!</p>*/}
-            {/*{ready && <div style={{ margin: '10px' }}><Link to="buyplot">Buy Plot</Link></div>}*/}
+            {/*{ready && <div style={{ margin: '10px' }}><Link to="buyplot">Buy PlotItem</Link></div>}*/}
             {/*{ready && <div style={{ margin: '10px' }}><Link to="yourplots">Your Plots</Link></div>}*/}
-            {/*{ready && <div style={{ margin: '10px' }}><Link to="draw">Draw On Your Plot</Link></div>}*/}
+            {/*{ready && <div style={{ margin: '10px' }}><Link to="draw">Draw On Your PlotItem</Link></div>}*/}
             {isAuthenticated && !ready && (
                 <div>
                     <br />
@@ -107,7 +84,6 @@ export const Home = () => {
                 </div>
             )}
             <Nolandia />
-            <Footer />
         </>
     );
 };

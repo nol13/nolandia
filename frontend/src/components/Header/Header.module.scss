@@ -4,7 +4,6 @@
 .header {
   padding: 15px 0;
   box-shadow: $main-shadow;
-  margin-bottom: 15px;
 }
 
 .container {
@@ -16,7 +15,7 @@
 .logo {
   font-family: $custom-font;
   font-size: $logo-size;
-  color: #7B3FE4;
+  color: $main-color;
 }
 
 
