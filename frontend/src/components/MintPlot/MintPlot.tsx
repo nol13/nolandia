@@ -129,7 +129,6 @@ export const MintPlot = () => {
                     return;
                 } else  {
                    const {x1, x2, y1, y2} = getCoordsFromPoints(xp1, xp2, yp1, yp2);
-
                     ctx.clearRect(0, 0, plotGridRef.current.width, plotGridRef.current.height);
                     paintOwned();
                     for (let i = x1; i <= x2; i++) {
@@ -145,8 +144,8 @@ export const MintPlot = () => {
                             ctx.fillRect(i * 8, j * 8, 8, 8);
                         }
                     }
-                    setPoint1(undefined);
-                    setPoint2(undefined);
+                    //setPoint1(undefined);
+                    //setPoint2(undefined);
                }
             }
 
@@ -163,8 +162,10 @@ export const MintPlot = () => {
             const y = clientY - top;
             const plotX = Math.floor(x / 8);
             const plotY = Math.floor(y / 8);
-            if (point1) {
+            if (point1 && !point2) {
                 setPoint2(point1)
+            } else if (point1 && point2) {
+                setPoint2(undefined);
             }
             setPoint1({x: plotX, y: plotY});
         }
