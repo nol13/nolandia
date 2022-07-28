@@ -70,6 +70,7 @@ export const MintPlot = () => {
 
     const [point1, setPoint1] = useState<Point>();
     const [point2, setPoint2] = useState<Point>();
+    const [showOwnedError, setShowOwnedError] = useState<boolean>();
 
     useEffect(() => {
         isWeb3Enabled && fetch()
@@ -118,6 +119,7 @@ export const MintPlot = () => {
                     ctx.fillRect(x * 8, y * 8, 8, 8);
                 } else {
                     setPoint1(undefined);
+                    setShowOwnedError(true);
                 }
 
             } else if (point1 && point2) {
@@ -138,14 +140,13 @@ export const MintPlot = () => {
                                 paintOwned();
                                 setPoint1(undefined);
                                 setPoint2(undefined);
+                                setShowOwnedError(true);
                                 return;
                             }
                             ctx.fillStyle = '#b233a1';
                             ctx.fillRect(i * 8, j * 8, 8, 8);
                         }
                     }
-                    //setPoint1(undefined);
-                    //setPoint2(undefined);
                }
             }
 
@@ -157,6 +158,7 @@ export const MintPlot = () => {
         const {clientX, clientY} = event;
         const ctx = plotGridRef.current?.getContext("2d");
         if (ctx && plotGridRef.current) {
+            setShowOwnedError(false);
             const { left, top } = plotGridRef.current.getBoundingClientRect();
             const x = clientX - left;
             const y = clientY - top;
@@ -186,46 +188,46 @@ export const MintPlot = () => {
         }
     };
 
- 
-    
-    const [x1, setX1] = useState<string>("");
-    const [y1, setY1] = useState<string>("");
-    const [x2, setX2] = useState<string>("");
-    const [y2, setY2] = useState<string>("");
-
     const mint = () => {
-        const x1Int = parseInt(x1);
-        const y1Int = parseInt(y1);
-        const x2Int = parseInt(x2);
-        const y2Int = parseInt(y2);
 
-        if (
-            Number.isInteger(x1Int) &&
-            Number.isInteger(y1Int) &&
-            Number.isInteger(x2Int) &&
-            Number.isInteger(y2Int)
-        ) {
-            const value = ((x2Int - x1Int) * (y2Int - y1Int)) * 64
-            const options = {
-                params: { x1, y1, x2, y2 },
-                msgValue: `${value}`
+        const {x: x1, y: y1 } = point1 || {};
+        const {x: x2, y: y2 } = point2 || {};
+
+        if (x1 !== undefined && y1 !== undefined) {
+            let params;
+            if (x2 !== undefined && y2 !== undefined) {
+                params = getCoordsFromPoints( x1, x2, y1, y2);
+                params.x2 = params.x2 + 1;
+                params.y2 = params.y2 + 1;
+            } else {
+                params = { x1, y1, x2: x1 + 1, y2: y1 + 1 }
             }
-            runContractFunction({ params: options }).then(() => fetch());
+
+            if (params) {
+                console.log(params)
+                const value = ((params.x2 - params.x1) * (params.y2 - params.y1)) * 64;
+                console.log(value)
+                const stringParams = { x1: params.x1.toString(), y1: params.y1.toString(), x2: params.x2.toString(), y2: params.y2.toString() }
+                const options = {
+                    params: stringParams,
+                    msgValue: `${value}`
+                }
+                runContractFunction({ params: options }).then(() => fetch()).catch(e => console.log(e));
+            }
         }
     };
 
     return (
         <div style={{padding: '10px', border: '1px solid black'}}>
             <h1>Mint New Plot</h1>
-            <div>x1: <input value={x1} onChange={e => setX1(e.target.value)} /></div>
-            <div>y1: <input value={y1} onChange={e => setY1(e.target.value)} /></div>
-            <div>x2: <input value={x2} onChange={e => setX2(e.target.value)} /></div>
-            <div>y2: <input value={y2} onChange={e => setY2(e.target.value)} /></div>
+            <h3>Click once to select one parcel, click again to select multiple parcels.</h3>
             <div><button disabled={isFetching || isLoading} onClick={mint}>Mint!</button></div>
             <div>data: {JSON.stringify(data)}</div>
             <div>mint error: {JSON.stringify(error)}</div>
             <div>you own: {JSON.stringify(balanceData)} plots</div>
             <div>balance check error: {JSON.stringify(bError)}</div>
+            {showOwnedError && <div style={{color: 'red'}}>Can't buy owned!</div>}
+            <div>1: {point1?.x}, {point1?.y} 2: {point2?.x}, {point2?.y}</div>
             <canvas width="1024" height="1024"  ref={plotGridRef} id="nolandiaCanvas" onClick={selectParcel}/>
         </div>
     )
