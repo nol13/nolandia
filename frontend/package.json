@@ -13,8 +13,8 @@
     "classnames": "^2.3.1",
     "dotenv": "^16.0.1",
     "ethers": "^5.6.8",
-    "moralis": "^1.8.0",
-    "node-sass": "^7.0.1",
+    "moralis": "^1.10.1",
+    "sass": "^1.54.0",
     "paper": "^0.12.15",
     "react": "18.1.0",
     "react-dom": "18.1.0",
@@ -23,8 +23,7 @@
     "react-scripts": "^5.0.1",
     "reactjs-popup": "^2.0.5",
     "typescript": "^4.7.3",
-    "util": "^0.12.4",
-    "wagmi": "^0.4.12"
+    "util": "^0.12.4"
   },
   "scripts": {
     "start": "react-scripts start",
