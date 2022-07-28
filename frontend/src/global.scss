@@ -1,4 +1,8 @@
 :global {
+  .container {
+    flex: 1 0 auto;
+  }
+
   .wrapper {
     max-width: 1120px;
     padding: 0 30px;

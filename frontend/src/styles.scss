@@ -7,9 +7,15 @@
   outline: none;
 }
 
+ul, ol {
+    list-style: none;
+}
+
 body {
   font-family: $main-font;
   font-size: $standard-fz;
+  display: flex;
+  flex-direction: column;
 }
 
 button {
