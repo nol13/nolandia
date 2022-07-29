@@ -1,9 +1,12 @@
 import React, {useState, useEffect, useContext, useRef, SyntheticEvent} from "react";
 import { useWeb3Contract, useWeb3ExecuteFunction, useMoralis } from "react-moralis";
+import { ToastContainer, toast } from 'react-toastify';
 import NolandiaAbi from '../../contracts/Nolandia.json';
 import contractAddress from "../../contracts/contract-address.json";
 import { PlotDataContextType, PlotDataContext } from "../App/App";
 import styles from './MintPlot.module.scss';
+import 'react-toastify/dist/ReactToastify.css';
+
 //  "Nolandia": "0x4A5B2494CBae765766684dC7F58fF381f2C756B4"
 
 interface Point {
@@ -97,6 +100,10 @@ export const MintPlot = () => {
     }, []);
 
     useEffect(() => {
+        toast.error('Somehting went wrong!');
+    }, [error])
+
+    useEffect(() => {
         if (mappedPlotData) {
             const newParcelsOwned = Array(128).map(() => Array(128));
             for (const plot of mappedPlotData) {
@@ -134,6 +141,7 @@ export const MintPlot = () => {
                     setPoint1(undefined);
                     setNumSelected(0);
                     setShowOwnedError(true);
+                    toast.error('You cannot select a parcel that someone already own');
                 }
 
             } else if (point1 && point2) {
@@ -158,20 +166,25 @@ export const MintPlot = () => {
                                 setPoint2(undefined);
                                 setShowOwnedError(true);
                                 setNumSelected(0);
+
+                                toast.error('You cannot select a parcel that someone already own');
                                 return;
                             }
                             ctx.fillStyle = '#7B3FE4';
                             ctx.fillRect(i * 8 - 1, j * 8 - 1, 7, 7);
                         }
                     }
-               }
+                    toast(`You have selected a parcel: ${x2 - x1}x${y2 - y1}
+                    Coordinates: (${x1}, ${y1}) - (${x2}, ${y2})`);
+
+
+                }
             }
 
         }
     }, [point1, point2, parcelsOwned]);
 
     const selectParcel = (event: React.MouseEvent<HTMLCanvasElement>) => {
-
         const {clientX, clientY} = event;
         const ctx = plotGridRef.current?.getContext("2d");
         if (ctx && plotGridRef.current) {
@@ -206,7 +219,6 @@ export const MintPlot = () => {
     };
 
     const mint = () => {
-
         const {x: x1, y: y1 } = point1 || {};
         const {x: x2, y: y2 } = point2 || {};
 
@@ -245,6 +257,7 @@ export const MintPlot = () => {
             {/*<div>balance check error: {JSON.stringify(bError)}</div>*/}
             {/*{showOwnedError && <div style={{color: 'red'}}>Can't buy owned!</div>}*/}
             {/*<div>1: {point1?.x}, {point1?.y} 2: {point2?.x}, {point2?.y} - Parcels Selected: {numSelected}</div>*/}
+            <ToastContainer />
             <div className={styles.canvasContainer}>
                 <canvas className={styles.plotCanvas} width="1024" height="1024"  ref={plotGridRef} id={styles.canvas} onClick={selectParcel}/>
                 {point2 && clickPos && (
