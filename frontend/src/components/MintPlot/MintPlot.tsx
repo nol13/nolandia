@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useContext, useRef} from "react";
+import React, {useState, useEffect, useContext, useRef, SyntheticEvent} from "react";
 import { useWeb3Contract, useWeb3ExecuteFunction, useMoralis } from "react-moralis";
 import NolandiaAbi from '../../contracts/Nolandia.json';
 import contractAddress from "../../contracts/contract-address.json";
@@ -70,6 +70,7 @@ export const MintPlot = () => {
 
     const [point1, setPoint1] = useState<Point>();
     const [point2, setPoint2] = useState<Point>();
+    const [clickPos, setClickPos] = useState<Point>();
     const [showOwnedError, setShowOwnedError] = useState<boolean>();
     const [numSelected, setNumSelected] = useState<number>(0);
 
@@ -84,6 +85,16 @@ export const MintPlot = () => {
     const {
         mappedPlotData
     } = useContext<PlotDataContextType>(PlotDataContext);
+
+    useEffect(() => {
+        const handleClick = (e: MouseEvent) => {
+            setClickPos({ x: e.pageX, y: e.pageY });
+        }
+
+        window.addEventListener('click', handleClick);
+
+        return () => window.removeEventListener('click', handleClick);
+    }, []);
 
     useEffect(() => {
         if (mappedPlotData) {
@@ -135,6 +146,7 @@ export const MintPlot = () => {
                     return;
                 } else  {
                    const {x1, x2, y1, y2} = getCoordsFromPoints(xp1, xp2, yp1, yp2);
+
                     ctx.clearRect(0, 0, plotGridRef.current.width, plotGridRef.current.height);
                     paintOwned();
                     for (let i = x1; i <= x2; i++) {
@@ -152,7 +164,6 @@ export const MintPlot = () => {
                             ctx.fillRect(i * 8 - 1, j * 8 - 1, 7, 7);
                         }
                     }
-                    setNumSelected((x2 - x1 + 1) * (y2 - y1 + 1));
                }
             }
 
@@ -222,20 +233,28 @@ export const MintPlot = () => {
     };
 
     return (
-        <div style={{padding: '10px', border: '1px solid black'}}>
-            <h1>Mint New Plot</h1>
-            <h3>Click once to select one parcel, click again to select multiple parcels.</h3>
-            <div>
-                <button className={styles.mintButton} disabled={isFetching || isLoading} onClick={mint}>Mint!</button>
-            </div>
-            <div>data: {JSON.stringify(data)}</div>
-            <div>mint error: {JSON.stringify(error)}</div>
-            <div>you own: {JSON.stringify(balanceData)} plots</div>
-            <div>balance check error: {JSON.stringify(bError)}</div>
-            {showOwnedError && <div style={{color: 'red'}}>Can't buy owned!</div>}
-            <div>1: {point1?.x}, {point1?.y} 2: {point2?.x}, {point2?.y} - Parcels Selected: {numSelected}</div>
+        <div>
+            {/*<h1>Mint New Plot</h1>*/}
+            {/*<h3>Click once to select one parcel, click again to select multiple parcels.</h3>*/}
+            {/*<div>*/}
+            {/*    <button className={styles.mintButton} disabled={isFetching || isLoading} onClick={mint}>Mint!</button>*/}
+            {/*</div>*/}
+            {/*<div>data: {JSON.stringify(data)}</div>*/}
+            {/*<div>mint error: {JSON.stringify(error)}</div>*/}
+            {/*<div>you own: {JSON.stringify(balanceData)} plots</div>*/}
+            {/*<div>balance check error: {JSON.stringify(bError)}</div>*/}
+            {/*{showOwnedError && <div style={{color: 'red'}}>Can't buy owned!</div>}*/}
+            {/*<div>1: {point1?.x}, {point1?.y} 2: {point2?.x}, {point2?.y} - Parcels Selected: {numSelected}</div>*/}
             <div className={styles.canvasContainer}>
-                <canvas className={styles.plotCanvas} width="1024" height="1024"  ref={plotGridRef} id="nolandiaCanvas" onClick={selectParcel}/>
+                <canvas className={styles.plotCanvas} width="1024" height="1024"  ref={plotGridRef} id={styles.canvas} onClick={selectParcel}/>
+                {point2 && clickPos && (
+                    <button
+                        style={{top: clickPos.y, left: clickPos.x }}
+                        type="button"
+                        onClick={mint}
+                        className={styles.mintBtn}
+                    >Mint</button>
+                )}
             </div>
         </div>
     )

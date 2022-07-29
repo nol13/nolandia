@@ -6,10 +6,9 @@ import PixelEditor from '@potch/pixeleditor/pixeleditor';
 import { useParams } from "react-router-dom";
 
 import styles from './DrawPixels.module.scss';
-import {PlotDataContext} from "../App/App";
+import { PlotDataContext } from "../App/App";
 
 export const DrawPixels = () => {
-    //const [plotId, setPlotId] = useState('');
     const { data, error, runContractFunction, isFetching, isLoading } =
         useWeb3Contract({
             abi: NolandiaAbi.abi,
