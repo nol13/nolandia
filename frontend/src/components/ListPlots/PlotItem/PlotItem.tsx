@@ -12,7 +12,7 @@ type PlotItemProps = {
     y1: number;
     x2: number;
     y2: number;
-    imageData: ImageData | undefined;
+    imageData: number[] | undefined;
 }
 
 const PlotItem: React.FC<PlotItemProps> = ({
@@ -42,7 +42,7 @@ const PlotItem: React.FC<PlotItemProps> = ({
                     <li>Coordinates: ({x1}, {y1}), ({x2}, {y2})</li>
                     <li>Size: {canvasWidth}x{canvasHeight}</li>
                 </ul>
-                <Link to="/draw" className={styles.drawBtn}>Draw</Link>
+                <Link to={`/draw/${plotId}`} className={styles.drawBtn}>Draw</Link>
             </div>
             {imageData && (
                 <Link to="/draw">

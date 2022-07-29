@@ -1,9 +1,12 @@
-import React, {useState, useEffect, useContext, useRef} from "react";
+import React, {useState, useEffect, useContext, useRef, SyntheticEvent} from "react";
 import { useWeb3Contract, useWeb3ExecuteFunction, useMoralis } from "react-moralis";
+import { ToastContainer, toast } from 'react-toastify';
 import NolandiaAbi from '../../contracts/Nolandia.json';
 import contractAddress from "../../contracts/contract-address.json";
 import { PlotDataContextType, PlotDataContext } from "../App/App";
 import styles from './MintPlot.module.scss';
+import 'react-toastify/dist/ReactToastify.css';
+
 //  "Nolandia": "0x4A5B2494CBae765766684dC7F58fF381f2C756B4"
 
 interface Point {
@@ -70,6 +73,7 @@ export const MintPlot = () => {
 
     const [point1, setPoint1] = useState<Point>();
     const [point2, setPoint2] = useState<Point>();
+    const [clickPos, setClickPos] = useState<Point>();
     const [showOwnedError, setShowOwnedError] = useState<boolean>();
     const [numSelected, setNumSelected] = useState<number>(0);
 
@@ -84,6 +88,21 @@ export const MintPlot = () => {
     const {
         mappedPlotData
     } = useContext<PlotDataContextType>(PlotDataContext);
+
+    useEffect(() => {
+        const handleClick = (e: MouseEvent) => {
+            setClickPos({ x: e.pageX, y: e.pageY });
+        }
+
+        window.addEventListener('click', handleClick);
+
+        return () => window.removeEventListener('click', handleClick);
+    }, []);
+
+    useEffect(() => {
+        if (!error) return;
+        toast.error('Something went wrong!');
+    }, [error])
 
     useEffect(() => {
         if (mappedPlotData) {
@@ -123,6 +142,7 @@ export const MintPlot = () => {
                     setPoint1(undefined);
                     setNumSelected(0);
                     setShowOwnedError(true);
+                    toast.error('You cannot select a parcel that someone already own');
                 }
 
             } else if (point1 && point2) {
@@ -135,6 +155,7 @@ export const MintPlot = () => {
                     return;
                 } else  {
                    const {x1, x2, y1, y2} = getCoordsFromPoints(xp1, xp2, yp1, yp2);
+
                     ctx.clearRect(0, 0, plotGridRef.current.width, plotGridRef.current.height);
                     paintOwned();
                     for (let i = x1; i <= x2; i++) {
@@ -146,21 +167,25 @@ export const MintPlot = () => {
                                 setPoint2(undefined);
                                 setShowOwnedError(true);
                                 setNumSelected(0);
+
+                                toast.error('You cannot select a parcel that someone already own');
                                 return;
                             }
                             ctx.fillStyle = '#7B3FE4';
                             ctx.fillRect(i * 8 - 1, j * 8 - 1, 7, 7);
                         }
                     }
-                    setNumSelected((x2 - x1 + 1) * (y2 - y1 + 1));
-               }
+                    toast(`You have selected a parcel: ${x2 - x1}x${y2 - y1}
+                    Coordinates: (${x1}, ${y1}) - (${x2}, ${y2})`);
+
+
+                }
             }
 
         }
     }, [point1, point2, parcelsOwned]);
 
     const selectParcel = (event: React.MouseEvent<HTMLCanvasElement>) => {
-
         const {clientX, clientY} = event;
         const ctx = plotGridRef.current?.getContext("2d");
         if (ctx && plotGridRef.current) {
@@ -195,7 +220,6 @@ export const MintPlot = () => {
     };
 
     const mint = () => {
-
         const {x: x1, y: y1 } = point1 || {};
         const {x: x2, y: y2 } = point2 || {};
 
@@ -222,20 +246,29 @@ export const MintPlot = () => {
     };
 
     return (
-        <div style={{padding: '10px', border: '1px solid black'}}>
-            <h1>Mint New Plot</h1>
-            <h3>Click once to select one parcel, click again to select multiple parcels.</h3>
-            <div>
-                <button className={styles.mintButton} disabled={isFetching || isLoading} onClick={mint}>Mint!</button>
-            </div>
-            <div>data: {JSON.stringify(data)}</div>
-            <div>mint error: {JSON.stringify(error)}</div>
-            <div>you own: {JSON.stringify(balanceData)} plots</div>
-            <div>balance check error: {JSON.stringify(bError)}</div>
-            {showOwnedError && <div style={{color: 'red'}}>Can't buy owned!</div>}
-            <div>1: {point1?.x}, {point1?.y} 2: {point2?.x}, {point2?.y} - Parcels Selected: {numSelected}</div>
+        <div>
+            {/*<h1>Mint New Plot</h1>*/}
+            {/*<h3>Click once to select one parcel, click again to select multiple parcels.</h3>*/}
+            {/*<div>*/}
+            {/*    <button className={styles.mintButton} disabled={isFetching || isLoading} onClick={mint}>Mint!</button>*/}
+            {/*</div>*/}
+            {/*<div>data: {JSON.stringify(data)}</div>*/}
+            {/*<div>mint error: {JSON.stringify(error)}</div>*/}
+            {/*<div>you own: {JSON.stringify(balanceData)} plots</div>*/}
+            {/*<div>balance check error: {JSON.stringify(bError)}</div>*/}
+            {/*{showOwnedError && <div style={{color: 'red'}}>Can't buy owned!</div>}*/}
+            {/*<div>1: {point1?.x}, {point1?.y} 2: {point2?.x}, {point2?.y} - Parcels Selected: {numSelected}</div>*/}
+            <ToastContainer />
             <div className={styles.canvasContainer}>
-                <canvas className={styles.plotCanvas} width="1024" height="1024"  ref={plotGridRef} id="nolandiaCanvas" onClick={selectParcel}/>
+                <canvas className={styles.plotCanvas} width="1024" height="1024"  ref={plotGridRef} id={styles.canvas} onClick={selectParcel}/>
+                {point2 && clickPos && (
+                    <button
+                        style={{top: clickPos.y, left: clickPos.x }}
+                        type="button"
+                        onClick={mint}
+                        className={styles.mintBtn}
+                    >Mint</button>
+                )}
             </div>
         </div>
     )
