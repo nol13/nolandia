@@ -33,6 +33,16 @@
       transform: scale(1.06);
     }
   }
+
+  // popup
+  .popup-overlay {
+    backdrop-filter: blur(5px);
+    cursor: pointer;
+  }
+
+  .popup-content {
+    background: transparent;
+  }
 }
 
 

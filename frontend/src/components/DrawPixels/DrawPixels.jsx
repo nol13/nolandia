@@ -8,6 +8,17 @@ import { useParams } from "react-router-dom";
 import styles from './DrawPixels.module.scss';
 import { PlotDataContext } from "../App/App";
 
+const colors = [
+    [255, 255, 255], // white
+    [0, 0, 0],       // black
+    [255, 0, 0],     // red
+    [255, 255, 0],   // yellow
+    [0, 255, 0],     // green
+    [0, 255, 255],   // cyan
+    [0, 0, 255],     // blue
+    [255, 0, 255]    // magenta
+];
+
 export const DrawPixels = () => {
     const { data, error, runContractFunction, isFetching, isLoading } =
         useWeb3Contract({
@@ -54,7 +65,9 @@ export const DrawPixels = () => {
                 width,
                 height,
                 zoom: 16,
-                container: canvasRef.current
+                container: canvasRef.current,
+                colors,
+                currentColor: 1
             });
         }
     }, [plotId]);
@@ -74,6 +87,10 @@ export const DrawPixels = () => {
         }
     };
 
+    const colorClicked = (idx) => {
+        pixEditorRef.current?.setColor(idx);
+    }
+
     return (
         <div>
             <h1>Draw on plot with default pixels {plotId}</h1>
@@ -81,6 +98,10 @@ export const DrawPixels = () => {
             <div><button disabled={isFetching || isLoading} onClick={() => draw()}>Draw some pixels!</button></div>
             {/*<div>data: {JSON.stringify(data)}</div>*/}
             {/*<div>draw error: {JSON.stringify(error)}</div>*/}
+            <p>Colors:</p>
+            {colors.map((color, idx) => (
+              <button className={styles.colorBtn} onClick={() => colorClicked(idx)} style={{ background: `rgb(${color.join(', ')})` }}/>
+            ))}
             <div className={styles.canvasContainer} ref={canvasRef} />
         </div>
     )
