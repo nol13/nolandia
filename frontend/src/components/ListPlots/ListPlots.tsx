@@ -35,7 +35,7 @@ export const ListPlots = () => {
         <div className={classnames('wrapper', styles.plots)}>
             <h1>My Plots</h1>
             <ul className={styles.plotsList}>
-                {!myPlots?.length ? (
+                {myPlots?.length ? (
                     myPlots?.map((plot) => (
                         <PlotItem
                             key={plot.get("plotId")}
