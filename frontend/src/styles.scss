@@ -7,15 +7,18 @@
   outline: none;
 }
 
-ul, ol {
-    list-style: none;
+html, body {
+  height: 100%;
 }
 
 body {
   font-family: $main-font;
   font-size: $standard-fz;
-  display: flex;
-  flex-direction: column;
+
+}
+
+ul, ol {
+  list-style: none;
 }
 
 button {

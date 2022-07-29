@@ -8,8 +8,6 @@ import { useParams } from "react-router-dom";
 import styles from './DrawPixels.module.scss';
 import {PlotDataContext} from "../App/App";
 
-
-
 export const DrawPixels = () => {
     //const [plotId, setPlotId] = useState('');
     const { data, error, runContractFunction, isFetching, isLoading } =
@@ -84,7 +82,7 @@ export const DrawPixels = () => {
             <div><button disabled={isFetching || isLoading} onClick={() => draw()}>Draw some pixels!</button></div>
             <div>data: {JSON.stringify(data)}</div>
             <div>draw error: {JSON.stringify(error)}</div>
-            <div className={styles.canvasContainer} ref={canvasRef}></div>
+            <div className={styles.canvasContainer} ref={canvasRef} />
         </div>
     )
 };
