@@ -13,6 +13,7 @@
 }
 
 .logo {
+  display: flex;
   font-family: $custom-font;
   font-size: $logo-size;
   color: $main-color;
@@ -22,4 +23,15 @@
   margin-right: 18px;
 }
 
+.letter {
+  background: $main-color;
+  color: $text-color-additional;
+  width: 25px;
+  height: 25px;
+  border-radius: 4px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-right: 2px;
+}
 
