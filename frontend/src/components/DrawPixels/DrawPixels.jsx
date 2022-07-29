@@ -6,12 +6,9 @@ import PixelEditor from '@potch/pixeleditor/pixeleditor';
 import { useParams } from "react-router-dom";
 
 import styles from './DrawPixels.module.scss';
-import {PlotDataContext} from "../App/App";
-
-
+import { PlotDataContext } from "../App/App";
 
 export const DrawPixels = () => {
-    //const [plotId, setPlotId] = useState('');
     const { data, error, runContractFunction, isFetching, isLoading } =
         useWeb3Contract({
             abi: NolandiaAbi.abi,
@@ -78,13 +75,13 @@ export const DrawPixels = () => {
     };
 
     return (
-        <div style={{ padding: '10px', border: '1px solid black' }}>
+        <div>
             <h1>Draw on plot with default pixels {plotId}</h1>
             <div>plot to draw: {plotId}, Total Px: {numberOfPx}</div>
             <div><button disabled={isFetching || isLoading} onClick={() => draw()}>Draw some pixels!</button></div>
-            <div>data: {JSON.stringify(data)}</div>
-            <div>draw error: {JSON.stringify(error)}</div>
-            <div className={styles.canvasContainer} ref={canvasRef}></div>
+            {/*<div>data: {JSON.stringify(data)}</div>*/}
+            {/*<div>draw error: {JSON.stringify(error)}</div>*/}
+            <div className={styles.canvasContainer} ref={canvasRef} />
         </div>
     )
 };
