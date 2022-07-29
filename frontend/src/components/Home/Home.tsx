@@ -3,7 +3,6 @@ import { useMoralis } from "react-moralis";
 import { useChain } from "react-moralis";
 
 import { Nolandia } from '../Nolandia/Nolandia';
-import Header from '../Header/Header';
 
 const networks = [{
     key: "0x89",
@@ -62,7 +61,7 @@ export const connectors = [
 
 export const Home = () => {
 
-    const { isAuthenticated } = useMoralis();
+    const { isAuthenticated, user } = useMoralis();
     const { switchNetwork, chain } = useChain();
 
     const ready = isAuthenticated && chain?.shortName === "maticmum";

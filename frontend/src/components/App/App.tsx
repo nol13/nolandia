@@ -103,7 +103,9 @@ export const App = () => {
                         {ready && (<>
                             <Route path="buyplot" element={<MintPlot />} />
                             <Route path="myplots" element={<ListPlots />} />
-                            <Route path="draw" element={<DrawPixels />} />
+                                <Route path="draw" element={<DrawPixels />}>
+                                    <Route path=":plotId" element={<DrawPixels />} />
+                                </Route>
                         </>
                         )}
                         <Route path="*" element={<Home />} />
