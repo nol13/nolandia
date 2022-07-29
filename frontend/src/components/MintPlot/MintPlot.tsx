@@ -100,7 +100,8 @@ export const MintPlot = () => {
     }, []);
 
     useEffect(() => {
-        toast.error('Somehting went wrong!');
+        if (!error) return;
+        toast.error('Something went wrong!');
     }, [error])
 
     useEffect(() => {

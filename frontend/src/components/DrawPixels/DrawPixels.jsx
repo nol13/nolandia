@@ -75,12 +75,12 @@ export const DrawPixels = () => {
     };
 
     return (
-        <div style={{ padding: '10px', border: '1px solid black' }}>
+        <div>
             <h1>Draw on plot with default pixels {plotId}</h1>
             <div>plot to draw: {plotId}, Total Px: {numberOfPx}</div>
             <div><button disabled={isFetching || isLoading} onClick={() => draw()}>Draw some pixels!</button></div>
-            <div>data: {JSON.stringify(data)}</div>
-            <div>draw error: {JSON.stringify(error)}</div>
+            {/*<div>data: {JSON.stringify(data)}</div>*/}
+            {/*<div>draw error: {JSON.stringify(error)}</div>*/}
             <div className={styles.canvasContainer} ref={canvasRef} />
         </div>
     )
