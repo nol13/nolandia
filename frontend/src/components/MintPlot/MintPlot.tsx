@@ -279,6 +279,7 @@ export const MintPlot = () => {
             }
         } else if (point1) {
             top = -15;
+            left = 18;
             arrowPos = 'leftTop';
         }
 
