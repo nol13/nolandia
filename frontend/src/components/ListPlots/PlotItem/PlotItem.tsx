@@ -24,13 +24,13 @@ const PlotItem: React.FC<PlotItemProps> = ({
     y2,
     imageData
 }) => {
-    const { canvasRef, initImage, error } = useCanvas();
+    const { canvasRef, initCanvas } = useCanvas();
     const canvasWidth = useMemo(() => x2 - x1, [x1, x2]);
     const canvasHeight = useMemo(() => y2 - y1, [y1, y2]);
 
     useEffect(() => {
         if (!imageData) return;
-        initImage(imageData, canvasWidth, canvasHeight);
+        initCanvas(canvasWidth, canvasHeight, imageData);
     }, []);
 
     return (

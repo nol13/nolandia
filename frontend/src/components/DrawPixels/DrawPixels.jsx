@@ -1,28 +1,12 @@
-import React, { useState, useRef, useEffect, useContext } from "react";
+import React, { useState, useRef, useEffect, useMemo, useContext } from "react";
 import { useWeb3Contract, useMoralis } from "react-moralis";
 import NolandiaAbi from '../../contracts/Nolandia.json';
 import contractAddress from "../../contracts/contract-address.json";
-import PixelEditor from '@potch/pixeleditor/pixeleditor';
 import { useParams } from "react-router-dom";
+import useCanvas from '../../hooks/useCanvas'
 
 import styles from './DrawPixels.module.scss';
 import { PlotDataContext } from "../App/App";
-
-const colors = [
-    [255, 255, 255], // white
-    [0, 0, 0],       // black
-    [255, 0, 0],     // red
-    [255, 255, 0],   // yellow
-    [0, 255, 0],     // green
-    [0, 255, 255],   // cyan
-    [0, 0, 255],     // blue
-    [24, 77, 255],     // blue
-    [24, 77, 0],     // blue
-    [24, 245, 50],     // blue
-    [9, 245, 50],     // blue
-    [24, 245, 50],     // blue
-    [255, 0, 255]    // magenta
-];
 
 export const DrawPixels = () => {
     const { data, error, runContractFunction, isFetching, isLoading } =
@@ -31,83 +15,86 @@ export const DrawPixels = () => {
             contractAddress: contractAddress.Nolandia,
             functionName: "setPixels"
         });
-
-    const [numberOfPx, setNumberOfPx] = useState();
-
     const { isWeb3Enabled } = useMoralis();
-
-    const pixEditorRef = useRef();
-    const canvasRef = useRef();
+    const [numberOfPx, setNumberOfPx] = useState();
+    const [xScale, setXScale] = useState(1);
+    const [yScale, setYScale] = useState(1);
+    const [rect, setRect] = useState();
     const { plotId } = useParams();
-
+    const { combinedProcessedData } = useContext(PlotDataContext);
     const {
-        combinedProcessedData
-    } = useContext(PlotDataContext);
+        error: canvasError,
+        canvasRef,
+        canvas,
+        plotWidth,
+        plotHeight,
+        ctx,
+        imageData,
+        initCanvas,
+    } = useCanvas();
+    const plot = useMemo(() => combinedProcessedData[plotId], [plotId]);
 
     useEffect(() => {
-        if (pixEditorRef.current) return;
-        const plot = combinedProcessedData[plotId];
-        if (plot) {
-            const x1=plot.x1; //get("x1")
-            const y1=plot.y1
-            const x2=plot.x2
-            const y2=plot.y2
+        if (!plot) return;
+        const { x1, x2, y1, y2, imageData = [] } = plot;
+        const plotWidth = (x2 - x1) * 8;
+        const plotHeight = (y2 - y1) * 8;
 
-            // console.log({x1, x2, y1, y2})
+        initCanvas(plotWidth, plotHeight, imageData);
 
-            const height = (y2 - y1) * 8;
-            const width = (x2 - x1) * 8;
-            const minDim = Math.min(height, width);
-
-            setNumberOfPx(height * width);
-
-
-            const zoom = Math.floor(Math.max((minDim / 8) * 2));
-
-            //console.log({x1, x2, y1, y2, zoom, height, width})
-
-            pixEditorRef.current = new PixelEditor({
-                width,
-                height,
-                zoom: 16,
-                container: canvasRef.current,
-                colors,
-                currentColor: 1
-            });
-        }
     }, [plotId]);
 
+    useEffect(() => {
+        if (!ctx || !canvas || !imageData) return;
+        const rect = canvas.getBoundingClientRect();
+        const { width: canvasWidth, height: canvasHeight } = rect;
+        const xScale = canvasWidth / plotWidth;
+        const yScale = canvasHeight / plotHeight;
 
+        setRect(rect);
+        setXScale(xScale);
+        setYScale(yScale);
 
+        ctx.drawImage(canvas, 0, 0, canvasWidth, canvasHeight);
+    }, [canvas, ctx, imageData]);
 
-    const draw = () => {
-        if (!isWeb3Enabled) return;
-        //const pixels = Array(14336).fill(199);
+    const getEventPosition = (event) => {
+        const x = Math.round((event.clientX - rect.left) / xScale);
+        const y = Math.round((event.clientY - rect.top) / yScale);
+        return { x, y }
+    }
 
-        const imageData = pixEditorRef.current?.toImageData();
-        //console.log(imageData)
-        if (imageData?.data?.length) {
-            //console.log(imageData.data)
-            runContractFunction({ params: { params: { pixels: Array.from(imageData.data), plotId }, msgValue: `` } });
-        }
-    };
+    const handleClick = (event) => {
+        const { x, y } = getEventPosition(event);
+    }
 
-    const colorClicked = (idx) => {
-        pixEditorRef.current?.setColor(idx);
+    // const draw = () => {
+    //     if (!isWeb3Enabled) return;
+    //     //const pixels = Array(14336).fill(199);
+    //
+    //     const imageData = pixEditorRef.current?.toImageData();
+    //     //console.log(imageData)
+    //     if (imageData?.data?.length) {
+    //         //console.log(imageData.data)
+    //         runContractFunction({ params: { params: { pixels: Array.from(imageData.data), plotId }, msgValue: `` } });
+    //     }
+    // };
+
+    if (canvasError) {
+        return (
+            <div className="wrapper">
+                <h2 className={styles.oops}>Oops something goes wrong😔</h2>
+            </div>
+        );
     }
 
     return (
-        <div>
-            <h1>Draw on plot with default pixels {plotId}</h1>
-            <div>plot to draw: {plotId}, Total Px: {numberOfPx}</div>
-            <div><button disabled={isFetching || isLoading} onClick={() => draw()}>Draw some pixels!</button></div>
+        <div className="wrapper">
+            {/*<div><button disabled={isFetching || isLoading} onClick={() => draw()}>Draw some pixels!</button></div>*/}
             {/*<div>data: {JSON.stringify(data)}</div>*/}
             {/*<div>draw error: {JSON.stringify(error)}</div>*/}
-            <p>Colors:</p>
-            {colors.map((color, idx) => (
-              <button className={styles.colorBtn} onClick={() => colorClicked(idx)} style={{ background: `rgb(${color.join(', ')})` }}/>
-            ))}
-            <div className={styles.canvasContainer} ref={canvasRef} />
+
+            <canvas onClick={handleClick} ref={canvasRef} className={styles.canvas} />
         </div>
     )
 };

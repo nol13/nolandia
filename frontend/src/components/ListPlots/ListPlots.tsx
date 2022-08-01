@@ -18,7 +18,8 @@ export const ListPlots = () => {
     } = useContext<PlotDataContextType>(PlotDataContext);
 
     const { user } = useMoralis();
-
+    const address = user?.get("ethAddress");
+    const myPlots = useMemo(() => mintData?.filter(plot => plot.get("plotOwner") === address), [address, mintsLoading]);
 
     if (mintError || pixelError) {
         return <span>🤯</span>;
@@ -27,9 +28,6 @@ export const ListPlots = () => {
     if (mintsLoading || pixelsLoading || !combinedProcessedData) {
         return <span>🙄</span>;
     }
-
-    const address = user?.get("ethAddress");
-    const myPlots = useMemo(() => mintData?.filter(plot => plot.get("plotOwner") === address), [address]);
 
     return (
         <div className={classnames('wrapper', styles.plots)}>
