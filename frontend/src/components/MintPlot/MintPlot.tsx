@@ -140,6 +140,8 @@ export const MintPlot = () => {
                     ctx.fillStyle = '#7B3FE4';
                     ctx.fillRect(x * 8, y * 8, 8, 8);
                     setNumSelected(1);
+                    toast(`You have selected a parcel: ${1}x${1}
+                    Coordinates: (${x}, ${y}) - (${x + 1}, ${y + 1})`);
                 } else {
                     setPoint1(undefined);
                     setNumSelected(0);
@@ -177,7 +179,7 @@ export const MintPlot = () => {
                             ctx.fillRect(i * 8 - 1, j * 8 - 1, 7, 7);
                         }
                     }
-                    toast(`You have selected a parcel: ${x2 - x1}x${y2 - y1}
+                    toast(`You have selected a parcel: ${x2 - x1 + 1}x${y2 - y1 + 1}
                     Coordinates: (${x1}, ${y1}) - (${x2}, ${y2})`);
 
 
@@ -275,6 +277,9 @@ export const MintPlot = () => {
                     arrowPos = 'leftTop';
                 }
             }
+        } else if (point1) {
+            top = -15;
+            arrowPos = 'leftTop';
         }
 
         return { left, top, arrowPos };
@@ -308,7 +313,7 @@ export const MintPlot = () => {
             <ToastContainer />
             <div className={styles.canvasContainer}>
                 <canvas className={styles.plotCanvas} width="1024" height="1024"  ref={plotGridRef} id={styles.canvas} onClick={selectParcel}/>
-                {point2 && clickPos && (
+                {point1 && clickPos && (
                     <button
                         style={{top: getTopPosMint(), left: getLeftPosMint()}}
                         type="button"
