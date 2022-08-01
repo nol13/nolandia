@@ -1,5 +1,6 @@
 import React, {useState, useEffect, useContext, useRef, SyntheticEvent} from "react";
 import { useWeb3Contract, useWeb3ExecuteFunction, useMoralis } from "react-moralis";
+import classnames from "classnames";
 import { ToastContainer, toast } from 'react-toastify';
 import NolandiaAbi from '../../contracts/Nolandia.json';
 import contractAddress from "../../contracts/contract-address.json";
@@ -91,6 +92,7 @@ export const MintPlot = () => {
 
     useEffect(() => {
         const handleClick = (e: MouseEvent) => {
+            if (e.target !== plotGridRef.current) return;
             setClickPos({ x: e.pageX, y: e.pageY });
         }
 
@@ -245,6 +247,51 @@ export const MintPlot = () => {
         }
     };
 
+    const calculateMintButtonPosition = () => {
+        let left = 0;
+        let top = 0;
+        let arrowPos = '';
+
+        if (point1 && point2) {
+            const { x: x1, y: y1 } = point1;
+            const { x: x2, y: y2 } = point2;
+
+            if (x1 - x2 <= 0) {
+                left = 30;
+                if (y2 - y1 >= 0) {
+                    top = 42;
+                    arrowPos = 'rightBottom';
+                } else {
+                    top = -15;
+                    arrowPos = 'rightTop';
+                }
+            } else {
+                left = 30;
+                if (y2 - y1 >= 0) {
+                    top = 40;
+                    arrowPos = 'leftBottom';
+                } else {
+                    top = -15;
+                    arrowPos = 'leftTop';
+                }
+            }
+        }
+
+        return { left, top, arrowPos };
+    }
+
+    const getTopPosMint = () => {
+        if (!clickPos) return;
+        const pos = clickPos?.y - calculateMintButtonPosition()?.top;
+        return pos < 0 ? 0 : pos;
+    };
+
+    const getLeftPosMint = () => {
+        if (!clickPos) return;
+        const pos = clickPos?.x - calculateMintButtonPosition()?.left
+        return pos < 0 ? 0 : pos;
+    };
+
     return (
         <div>
             {/*<h1>Mint New Plot</h1>*/}
@@ -263,10 +310,10 @@ export const MintPlot = () => {
                 <canvas className={styles.plotCanvas} width="1024" height="1024"  ref={plotGridRef} id={styles.canvas} onClick={selectParcel}/>
                 {point2 && clickPos && (
                     <button
-                        style={{top: clickPos.y, left: clickPos.x }}
+                        style={{top: getTopPosMint(), left: getLeftPosMint()}}
                         type="button"
                         onClick={mint}
-                        className={styles.mintBtn}
+                        className={classnames(styles.mintBtn, styles?.[calculateMintButtonPosition()?.arrowPos])}
                     >Mint</button>
                 )}
             </div>

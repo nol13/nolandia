@@ -3,65 +3,102 @@
 
 
 .canvasContainer {
-    display: flex;
-    justify-content: center;
+  display: flex;
+  justify-content: center;
 }
 
 .plotCanvas {
 }
 
 #canvas {
-    background: $bg-color-main;
-    cursor: pointer;
+  background: $bg-color-main;
+  cursor: pointer;
 }
 
 .mintBtn {
-    font-size: 14px;
-    position: absolute;
-    padding: 5px 14px;
-    border-radius: 14px;
-    background: $addition-color;
-    color: $text-color-additional;
-    transition: all .21s linear;
-    cursor: pointer;
-    animation: showBtn .15s linear, shake 0.82s cubic-bezier(.36,.07,.19,.97) both 5s;
-    box-shadow: 0 8px 18px rgba(0, 0, 0, .4);
+  font-size: 14px;
+  position: absolute;
+  width: 56px;
+  height: 28px;
+  border-radius: 14px;
+  background: $addition-color;
+  color: $text-color-additional;
+  transition: all .21s linear;
+  cursor: pointer;
+  animation: showBtn .15s linear, shake 0.82s cubic-bezier(.36, .07, .19, .97) both 5s;
+  box-shadow: 0 8px 18px rgba(0, 0, 0, .4);
 
-    &:hover,
-    &:active,
-    &:focus {
-        transform: scale(1.05);
-    }
+  &:hover,
+  &:active,
+  &:focus {
+    transform: scale(1.05);
+  }
+
+  &:before {
+    content: '';
+    width: 0;
+    height: 0;
+    border-style: solid;
+    position: absolute;
+  }
+
+  &.rightBottom:before {
+    border-width: 10px 5px 0 10px;
+    border-color: $addition-color transparent transparent transparent;
+    bottom: -10px;
+    right: 13px;
+  }
+
+  &.leftBottom:before {
+    border-width: 10px 10px 0 5px;
+    border-color: $addition-color transparent transparent transparent;
+    bottom: -10px;
+    left: 13px;
+  }
+
+  &.rightTop:before {
+    border-width: 0 5px 10px 10px;
+    border-color: transparent transparent $addition-color transparent;
+    top: -10px;
+    right: 13px;
+  }
+
+  &.leftTop:before {
+    border-width: 0 10px 10px 5px;
+    border-color: transparent transparent $addition-color transparent;
+    top: -10px;
+    left: 13px;
+  }
 }
 
 @keyframes showBtn {
-    0% {
-        opacity: .75;
-        transform: scale(0);
-    }
-    25% {
-        transform: scale(.65);
-    }
-    100% {
-        opacity: 1;
-        transform: scale(1);
-    }
+  0% {
+    opacity: .75;
+    transform: scale(0);
+  }
+  25% {
+    transform: scale(.65);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 @keyframes shake {
-    10%, 90% {
-        transform: translate3d(-1px, 0, 0);
-    }
+  10%, 90% {
+    transform: translate3d(-1px, 0, 0);
+  }
 
-    20%, 80% {
-        transform: translate3d(2px, 0, 0);
-    }
+  20%, 80% {
+    transform: translate3d(2px, 0, 0);
+  }
 
-    30%, 50%, 70% {
-        transform: translate3d(-4px, 0, 0);
-    }
+  30%, 50%, 70% {
+    transform: translate3d(-4px, 0, 0);
+  }
 
-    40%, 60% {
-        transform: translate3d(4px, 0, 0);
-    }
+  40%, 60% {
+    transform: translate3d(4px, 0, 0);
+  }
 }

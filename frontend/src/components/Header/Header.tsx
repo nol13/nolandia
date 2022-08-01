@@ -13,7 +13,7 @@ const Header = ({
     return (
         <header className={styles.header}>
             <div className={classnames("wrapper", styles.container)}>
-                <a href="/"> <img src="/NolandiaLogo2.png" alt="nolandia" style={{height: "75px"}} /></a>
+                <h1><a href="/" className={styles.logo}><span className={styles.letter}>n</span>olandia</a></h1>
                 {isAuth ? (<div>
                         <Link className={styles.headerLink} to={`/`}>Home</Link>
                         <Link className={styles.headerLink} to={`/myplots`}>My Plots</Link>
