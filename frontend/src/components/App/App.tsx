@@ -1,6 +1,6 @@
 
 import React, { useEffect, useMemo } from "react";
-import { useMoralis, useChain, useMoralisQuery } from "react-moralis";
+import { useMoralis, useChain, useMoralisQuery, useMoralisCloudFunction } from "react-moralis";
 import type { Moralis } from 'moralis';
 import { Routes, Route } from "react-router-dom";
 import { Home } from "../Home/Home";
@@ -33,7 +33,7 @@ export const App = () => {
     const { chain } = useChain();
 
     const { data: mintData, error: mintError, isLoading: mintsLoading } = useMoralisQuery("Mints3");
-    const { data: pixelData, error: pixelError, isLoading: pixelsLoading } = useMoralisQuery("PixelsSet");
+    const { data: pixelData, error: pixelError, isLoading: pixelsLoading } = useMoralisQuery("PlotData");
 
     useEffect(() => {
         if (isAuthenticated && !isWeb3Enabled && !isWeb3EnableLoading) enableWeb3();
@@ -97,7 +97,6 @@ export const App = () => {
                 }}>
                 <div className="container">
                     <Header login={login} logout={logOut} isAuth={isAuthenticated || isAuthenticating} />
-
                     <Routes>
                         <Route path="/" element={<Home />} />
                         {ready && (<>

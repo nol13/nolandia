@@ -1,7 +1,5 @@
 import React, { useState, useRef, useEffect, useContext } from "react";
-import { useWeb3Contract, useMoralis } from "react-moralis";
-import NolandiaAbi from '../../contracts/Nolandia.json';
-import contractAddress from "../../contracts/contract-address.json";
+import { useMoralisCloudFunction} from "react-moralis";
 import PixelEditor from '@potch/pixeleditor/pixeleditor';
 import { useParams } from "react-router-dom";
 
@@ -25,16 +23,8 @@ const colors = [
 ];
 
 export const DrawPixels = () => {
-    const { data, error, runContractFunction, isFetching, isLoading } =
-        useWeb3Contract({
-            abi: NolandiaAbi.abi,
-            contractAddress: contractAddress.Nolandia,
-            functionName: "setPixels"
-        });
-
+    const {  fetch: drawPx, isLoading, isFetching } = useMoralisCloudFunction("SetDrawnPixels", );
     const [numberOfPx, setNumberOfPx] = useState();
-
-    const { isWeb3Enabled } = useMoralis();
 
     const pixEditorRef = useRef();
     const canvasRef = useRef();
@@ -48,23 +38,17 @@ export const DrawPixels = () => {
         if (pixEditorRef.current) return;
         const plot = combinedProcessedData[plotId];
         if (plot) {
-            const x1=plot.x1; //get("x1")
-            const y1=plot.y1
-            const x2=plot.x2
-            const y2=plot.y2
-
-            // console.log({x1, x2, y1, y2})
+            const x1=plot.x1;
+            const y1=plot.y1;
+            const x2=plot.x2;
+            const y2=plot.y2;
 
             const height = (y2 - y1) * 8;
             const width = (x2 - x1) * 8;
-            const minDim = Math.min(height, width);
-
             setNumberOfPx(height * width);
 
-
-            const zoom = Math.floor(Math.max((minDim / 8) * 2));
-
-            //console.log({x1, x2, y1, y2, zoom, height, width})
+            // const minDim = Math.min(height, width);
+            // const zoom = Math.floor(Math.max((minDim / 8) * 2));
 
             pixEditorRef.current = new PixelEditor({
                 width,
@@ -81,14 +65,9 @@ export const DrawPixels = () => {
 
 
     const draw = () => {
-        if (!isWeb3Enabled) return;
-        //const pixels = Array(14336).fill(199);
-
         const imageData = pixEditorRef.current?.toImageData();
-        //console.log(imageData)
         if (imageData?.data?.length) {
-            //console.log(imageData.data)
-            runContractFunction({ params: { params: { pixels: Array.from(imageData.data), plotId }, msgValue: `` } });
+            drawPx({ params: { plotId, imageData: Array.from(imageData.data) } });
         }
     };
 
@@ -101,8 +80,6 @@ export const DrawPixels = () => {
             <h1>Draw on plot with default pixels {plotId}</h1>
             <div>plot to draw: {plotId}, Total Px: {numberOfPx}</div>
             <div><button disabled={isFetching || isLoading} onClick={() => draw()}>Draw some pixels!</button></div>
-            {/*<div>data: {JSON.stringify(data)}</div>*/}
-            {/*<div>draw error: {JSON.stringify(error)}</div>*/}
             <p>Colors:</p>
             {colors.map((color, idx) => (
               <button className={styles.colorBtn} onClick={() => colorClicked(idx)} style={{ background: `rgb(${color.join(', ')})` }}/>

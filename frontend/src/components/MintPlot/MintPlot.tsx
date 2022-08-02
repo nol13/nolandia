@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useContext, useRef, SyntheticEvent} from "react";
-import { useWeb3Contract, useWeb3ExecuteFunction, useMoralis } from "react-moralis";
+import { useWeb3Contract, useMoralis } from "react-moralis";
 import classnames from "classnames";
 import { ToastContainer, toast } from 'react-toastify';
 import NolandiaAbi from '../../contracts/Nolandia.json';
@@ -7,8 +7,6 @@ import contractAddress from "../../contracts/contract-address.json";
 import { PlotDataContextType, PlotDataContext } from "../App/App";
 import styles from './MintPlot.module.scss';
 import 'react-toastify/dist/ReactToastify.css';
-
-//  "Nolandia": "0x4A5B2494CBae765766684dC7F58fF381f2C756B4"
 
 interface Point {
     x: number,
@@ -55,32 +53,16 @@ const getCoordsFromPoints = (xp1: number, xp2: number, yp1: number, yp2: number)
 };
 
 export const MintPlot = () => {
-    const { user, isWeb3Enabled } = useMoralis();
-    const { data, error, runContractFunction, isFetching, isLoading } =
+    const { /*data,*/ error, runContractFunction, /*isFetching, isLoading*/ } =
         useWeb3Contract({
             abi: NolandiaAbi.abi,
             contractAddress: contractAddress.Nolandia,
             functionName: "buyPlot"
         });
 
-    const { data: balanceData, error: bError, fetch, /* isFetching, isLoading */ } = useWeb3ExecuteFunction({
-        abi: NolandiaAbi.abi,
-        contractAddress: contractAddress.Nolandia,
-        functionName: "balanceOf",
-        params: {
-            owner: user?.get("ethAddress")
-        },
-    });
-
     const [point1, setPoint1] = useState<Point>();
     const [point2, setPoint2] = useState<Point>();
     const [clickPos, setClickPos] = useState<Point>();
-    const [showOwnedError, setShowOwnedError] = useState<boolean>();
-    const [numSelected, setNumSelected] = useState<number>(0);
-
-    useEffect(() => {
-        isWeb3Enabled && fetch()
-    }, [isWeb3Enabled]);
 
     const [parcelsOwned, setParcelsOwned] = useState<boolean[][]>();
 
@@ -139,13 +121,13 @@ export const MintPlot = () => {
                 if (!parcelsOwned?.[y]?.[x]) {
                     ctx.fillStyle = '#7B3FE4';
                     ctx.fillRect(x * 8, y * 8, 8, 8);
-                    setNumSelected(1);
+                    //setNumSelected(1);
                     toast(`You have selected a parcel: ${1}x${1}
                     Coordinates: (${x}, ${y}) - (${x + 1}, ${y + 1})`);
                 } else {
                     setPoint1(undefined);
-                    setNumSelected(0);
-                    setShowOwnedError(true);
+                    //setNumSelected(0);
+                    //setShowOwnedError(true);
                     toast.error('You cannot select a parcel that someone already own');
                 }
 
@@ -155,7 +137,7 @@ export const MintPlot = () => {
 
                 if (xp1 === xp2 && yp1 === yp2) {
                     setPoint2(undefined);
-                    setNumSelected(1);
+                    //setNumSelected(1);
                     return;
                 } else  {
                    const {x1, x2, y1, y2} = getCoordsFromPoints(xp1, xp2, yp1, yp2);
@@ -169,8 +151,8 @@ export const MintPlot = () => {
                                 paintOwned();
                                 setPoint1(undefined);
                                 setPoint2(undefined);
-                                setShowOwnedError(true);
-                                setNumSelected(0);
+                                //setShowOwnedError(true);
+                                //setNumSelected(0);
 
                                 toast.error('You cannot select a parcel that someone already own');
                                 return;
@@ -193,7 +175,7 @@ export const MintPlot = () => {
         const {clientX, clientY} = event;
         const ctx = plotGridRef.current?.getContext("2d");
         if (ctx && plotGridRef.current) {
-            setShowOwnedError(false);
+            //setShowOwnedError(false);
             const { left, top } = plotGridRef.current.getBoundingClientRect();
             const x = clientX - left;
             const y = clientY - top;
@@ -244,7 +226,7 @@ export const MintPlot = () => {
                     params: stringParams,
                     msgValue: `${value}`
                 }
-                runContractFunction({ params: options }).then(() => fetch()).catch(e => console.log(e));
+                runContractFunction({ params: options }).catch(e => console.log(e));
             }
         }
     };
@@ -297,7 +279,6 @@ export const MintPlot = () => {
         const pos = clickPos?.x - calculateMintButtonPosition()?.left
         return pos < 0 ? 0 : pos;
     };
-
     return (
         <div>
             {/*<h1>Mint New Plot</h1>*/}

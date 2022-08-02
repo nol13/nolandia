@@ -48,7 +48,7 @@ contract Nolandia is ERC721, Ownable, PaymentSplitter /* , ERC721Enumerable, ERC
 
 
      uint256[128][128] public parcels;
-     mapping(uint256 => plot) plots;
+     mapping(uint256 => plot) public plots;
 
     
     constructor(address[] memory _payees, uint256[] memory _shares) ERC721("Nolandia", "NOLAND") PaymentSplitter(_payees, _shares) payable {}
@@ -89,7 +89,7 @@ contract Nolandia is ERC721, Ownable, PaymentSplitter /* , ERC721Enumerable, ERC
         return plotId;
     }
 
-     function setPixels (uint8[] calldata pixels, uint256 plotId) external {
+     /* function setPixels (uint8[] calldata pixels, uint256 plotId) external {
         require(ownerOf(plotId) == msg.sender, "u dont own this");
         plot memory myPlot = plots[plotId];
         uint32 xdiff = myPlot.x2 - myPlot.x1;
@@ -97,7 +97,7 @@ contract Nolandia is ERC721, Ownable, PaymentSplitter /* , ERC721Enumerable, ERC
         uint32 totalPxInPlot = (xdiff * ydiff * pxInParcel * valsPerPixel);
         require(totalPxInPlot == pixels.length, "wrong amount of px");
         emit PlotPixelsSet(plotId, pixels);
-    }
+    } */
 
     function _baseURI() internal pure override returns (string memory) {
         return "data:application/json;base64,";
