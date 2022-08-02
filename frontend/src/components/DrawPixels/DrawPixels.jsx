@@ -31,20 +31,22 @@ export const DrawPixels = () => {
         ctx,
         imageData,
         initCanvas,
+        resizeImageData
     } = useCanvas();
     const plot = useMemo(() => combinedProcessedData[plotId], [plotId]);
+    const mousePressed = useRef(false);
 
     useEffect(() => {
-        if (!plot) return;
+        if (!plot || isLoading || isFetching) return;
         const { x1, x2, y1, y2, imageData = [] } = plot;
         const plotWidth = (x2 - x1) * 8;
         const plotHeight = (y2 - y1) * 8;
 
         initCanvas(plotWidth, plotHeight, imageData);
 
-    }, [plotId]);
+    }, [plotId, isLoading, isFetching]);
 
-    useEffect(() => {
+    useEffect( () => {
         if (!ctx || !canvas || !imageData) return;
         const rect = canvas.getBoundingClientRect();
         const { width: canvasWidth, height: canvasHeight } = rect;
@@ -55,18 +57,47 @@ export const DrawPixels = () => {
         setXScale(xScale);
         setYScale(yScale);
 
-        ctx.drawImage(canvas, 0, 0, canvasWidth, canvasHeight);
+        resizeImageData(imageData, canvasWidth, canvasHeight);
     }, [canvas, ctx, imageData]);
 
-    const getEventPosition = (event) => {
-        const x = Math.round((event.clientX - rect.left) / xScale);
-        const y = Math.round((event.clientY - rect.top) / yScale);
+    const getCanvasEventPosition = (event) => {
+        const x = Math.floor((Math.floor(event.clientX - rect.left)) / xScale);
+        const y = Math.floor((Math.floor(event.clientY - rect.top)) / yScale);
         return { x, y }
     }
 
-    const handleClick = (event) => {
-        const { x, y } = getEventPosition(event);
+   const drawHighlight = (x, y) => {
+       ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+       ctx.fillRect(x, y, 1, .1);
+       ctx.fillRect(x, y, .1, 1);
+       ctx.fillRect(x + 1, y, .1, 1);
+       ctx.fillRect(x, y + 1, 1, .1);
+
+       ctx.fill();
+   }
+
+   const drawPixel = (x, y, color) => {
+       if (!mousePressed.current) return;
+       ctx.fillStyle = color;
+       ctx.rect(x, y, 1, 1);
+       ctx.fill();
+   }
+
+    const handleMove = (event) => {
+        const { x, y } = getCanvasEventPosition(event);
+
+        drawHighlight(x, y);
+        drawPixel(x, y, '#ff0000');
     }
+
+    const handleMouseDown = (event) => {
+        const { x, y } = getCanvasEventPosition(event);
+        mousePressed.current = true;
+        drawPixel(x, y, '#ff0000');
+    };
+    const handleMouseUp = () => mousePressed.current = false;
+    const handleMouseLeave = () => mousePressed.current = false;
 
     // const draw = () => {
     //     if (!isWeb3Enabled) return;
@@ -80,7 +111,7 @@ export const DrawPixels = () => {
     //     }
     // };
 
-    if (canvasError) {
+    if (canvasError || error) {
         return (
             <div className="wrapper">
                 <h2 className={styles.oops}>Oops something goes wrong😔</h2>
@@ -90,11 +121,23 @@ export const DrawPixels = () => {
 
     return (
         <div className="wrapper">
-            {/*<div><button disabled={isFetching || isLoading} onClick={() => draw()}>Draw some pixels!</button></div>*/}
-            {/*<div>data: {JSON.stringify(data)}</div>*/}
-            {/*<div>draw error: {JSON.stringify(error)}</div>*/}
-
-            <canvas onClick={handleClick} ref={canvasRef} className={styles.canvas} />
+            {isFetching || isLoading ? (
+              <div>
+                <h2 className={styles.oops}>Loading...</h2>
+              </div>
+            ) : (
+              <div className={styles.canvasContainer}>
+                  <canvas
+                    // onClick={handleClick}
+                    onMouseDown={handleMouseDown}
+                    onMouseUp={handleMouseUp}
+                    onMouseMove={handleMove}
+                    onMouseLeave={handleMouseLeave}
+                    ref={canvasRef}
+                    className={styles.canvas}
+                  />
+              </div>
+            )}
         </div>
     )
 };

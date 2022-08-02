@@ -1,8 +1,16 @@
 @import "../../variables";
 
-.canvas {
-  width: 100%;
+.canvasContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   height: calc(100vh - 104px);
+}
+
+.canvas {
+  width: 620px;
+  min-height: 620px;
+  box-shadow: 0 0 18px rgba(0, 0, 0, .3)
 }
 
 .colorBtn {

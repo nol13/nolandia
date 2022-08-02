@@ -41,12 +41,25 @@ function useCanvas() {
       ctxImageData.data[i] = localImageData[i] || whiteColor;
       ctxImageData.data[i + 1] = localImageData[i + 1] || whiteColor;
       ctxImageData.data[i + 2] = localImageData[i + 2] || whiteColor;
-      ctxImageData.data[i + 3] = localImageData[i + 3] || 255;
+      ctxImageData.data[i + 3] = localImageData[i + 3] || whiteColor;
     }
 
     ctx.putImageData(ctxImageData, 0, 0);
     setImageData(ctxImageData);
   }, [ctx, width, height]);
+
+  const resizeImageData = useCallback(async (imageData, width, height) => {
+    const resizeWidth = width >> 0;
+    const resizeHeight = height >> 0;
+    const ibm = await window.createImageBitmap(imageData, 0, 0, imageData.width, imageData.height, {
+      resizeWidth, resizeHeight
+    });
+    canvas.width = resizeWidth;
+    canvas.height = resizeHeight;
+
+    ctx.scale(resizeWidth / imageData.width, resizeHeight / imageData.height);
+    ctx.drawImage(ibm, 0, 0);
+  }, [canvas, ctx]);
 
   return {
     error,
@@ -57,6 +70,7 @@ function useCanvas() {
     ctx,
     imageData,
     initCanvas,
+    resizeImageData,
     setImage
   };
 }
