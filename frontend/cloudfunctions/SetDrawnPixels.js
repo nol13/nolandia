@@ -34,14 +34,38 @@ Moralis.Cloud.define("SetDrawnPixels", async (request) => {
         const userAddress = request.user.get("ethAddress").toLowerCase();
         if (owner === userAddress && request.params.imageData?.length) {
             const plotId = parseInt(request.params.plotId);
+
             const PlotData = Moralis.Object.extend("PlotData");
             const query = new Moralis.Query(PlotData);
             query.equalTo("plotId", plotId);
             const plotToDraw = await query.first();
+
+            const Mints = Moralis.Object.extend("Mints3");
+            const mintQuery = new Moralis.Query(Mints);
+            mintQuery.equalTo("plotId", plotId.toString());
+            const plotToDrawInfo = await mintQuery.first();
+
+            if (!plotToDrawInfo) return "plot doesnt exist";
+
+            const x1 = plotToDrawInfo.get('x1');
+            const y1 = plotToDrawInfo.get('y1');
+            const x2 = plotToDrawInfo.get('x2');
+            const y2 = plotToDrawInfo.get('y2');
+
+            const xDiff = x2 - x1;
+            const yDiff = y2 - y1;
+            const expectedLength = (xDiff * yDiff * 64 * 4);
+
+            if (request.params.imageData.length !== expectedLength) return "wrong length data";
+
+            const clampedImageData = Array.from(new Uint8ClampedArray(request.params.imageData));
+
+
+
             const plotToUpdate = plotToDraw || new PlotData();
             if (!plotToDraw) plotToUpdate.set("plotId", plotId);
-            plotToUpdate.set("imageData", request.params.imageData);
-            await plotToUpdate.save();
+            plotToUpdate.set("imageData", clampedImageData);
+            await plotToUpdate.save(null, { useMasterKey: true });
             return "image data saved"
         } else {
             return "you don't own that";
