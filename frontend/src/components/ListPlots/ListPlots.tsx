@@ -1,58 +1,67 @@
-import React, { useContext } from "react";
+import React, { useContext, useMemo } from "react";
+import classnames from "classnames";
+import { Link } from "react-router-dom";
 import { PlotDataContext, PlotDataContextType } from "../App/App";
+import PlotItem from "./PlotItem/PlotItem";
+import { useMoralis } from "react-moralis";
+
+import styles from "./ListPlots.module.scss";
 
 export const ListPlots = () => {
   const {
     mintData,
-    //pixelData,
-    //imageData,
     mintError,
     mintsLoading,
     pixelError,
     pixelsLoading,
-    //combinedProcessedData
+    combinedProcessedData,
   } = useContext<PlotDataContextType>(PlotDataContext);
+
+  const { user } = useMoralis();
 
   if (mintError || pixelError) {
     return <span>🤯</span>;
   }
 
-  if (mintsLoading || pixelsLoading) {
+  if (mintsLoading || pixelsLoading || !combinedProcessedData) {
     return <span>🙄</span>;
   }
 
+  const address = user?.get("ethAddress");
+  const myPlots = useMemo(
+    () => mintData?.filter((plot) => plot.get("plotOwner") === address),
+    [address]
+  );
+
   return (
-    <div style={{ padding: "10px", border: "1px solid green", margin: "10px" }}>
-      <h1>Purchased Plots</h1>
-      {mintData?.map((plot) => {
-        return (
-          <div
-            key={plot.get("plotId")}
-            style={{
-              padding: "10px",
-              border: "1px solid green",
-              margin: "10px",
-            }}
-          >
-            <div>Plot ID: {plot.get("plotId")}</div>
-            <div>Owner: {plot.get("plotOwner")}</div>
-            <div>
-              x1: {plot.get("x1")}, y1: {plot.get("y1")}, x2: {plot.get("x2")},
-              y2: {plot.get("y2")}{" "}
-            </div>
-          </div>
-        );
-      })}
-      {/* <h1>Image Data Set</h1>
-            {pixelData?.map(plot => {
-                return (
-                    <div key={plot.get("plotId")} style={{ padding: "10px", border: "1px solid blue", margin: "10px" }}>
-                        <div>Plot ID: {plot.get("plotId")}</div>
-                        <div>Data: {plot.get("imageData")}</div>
-                    </div>
-                );
-            })}
-            <div style={{ padding: "10px", border: "1px solid green", margin: "10px", maxWidth: '100%' }}>{imageData?.toString()}</div> */}
+    <div className={classnames("wrapper", styles.plots)}>
+      <h1>My Plots</h1>
+      <ul className={styles.plotsList}>
+        {myPlots?.length ? (
+          myPlots?.map((plot) => (
+            <PlotItem
+              key={plot.get("plotId")}
+              plotId={plot.get("plotId")}
+              plotOwner={plot.get("plotOwner")}
+              x1={plot.get("x1")}
+              y1={plot.get("y1")}
+              x2={plot.get("x2")}
+              y2={plot.get("y2")}
+              imageData={combinedProcessedData?.[plot.get("plotId")].imageData}
+            />
+          ))
+        ) : (
+          <li className={styles.emptyList}>
+            <h2>We couldn't find plots😔</h2>
+            <Link
+              to="/buyplot"
+              className={classnames("standard-btn", styles.buyBtn)}
+            >
+              Buy
+            </Link>
+          </li>
+        )}
+      </ul>
     </div>
   );
 };

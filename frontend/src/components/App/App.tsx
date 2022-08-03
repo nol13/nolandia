@@ -1,5 +1,10 @@
 import React, { useEffect, useMemo } from "react";
-import { useMoralis, useChain, useMoralisQuery } from "react-moralis";
+import {
+  useMoralis,
+  useChain,
+  useMoralisQuery,
+  useMoralisCloudFunction,
+} from "react-moralis";
 import type { Moralis } from "moralis";
 import { Routes, Route } from "react-router-dom";
 import { Home } from "../Home/Home";
@@ -13,6 +18,8 @@ import {
   plot,
   plotImgData,
 } from "../../utils/imageDataUtils";
+import Footer from "../Footer/Footer";
+import Header from "../Header/Header";
 
 export const PlotDataContext = React.createContext<PlotDataContextType>({
   mintError: null,
@@ -35,8 +42,15 @@ export interface PlotDataContextType {
 }
 
 export const App = () => {
-  const { isWeb3Enabled, enableWeb3, isAuthenticated, isWeb3EnableLoading } =
-    useMoralis();
+  const {
+    isWeb3Enabled,
+    enableWeb3,
+    isAuthenticated,
+    isWeb3EnableLoading,
+    logout,
+    isAuthenticating,
+    authenticate,
+  } = useMoralis();
   const { chain } = useChain();
 
   const {
@@ -48,13 +62,7 @@ export const App = () => {
     data: pixelData,
     error: pixelError,
     isLoading: pixelsLoading,
-  } = useMoralisQuery("PixelsSet");
-
-  //const pxReady = mintData && pixelData;
-
-  useEffect(() => {
-    if (isAuthenticated && !isWeb3Enabled && !isWeb3EnableLoading) enableWeb3();
-  }, [isAuthenticated, isWeb3Enabled]);
+  } = useMoralisQuery("PlotData");
 
   const mappedPlotData = useMemo(() => {
     if (!mintData) return;
@@ -88,6 +96,22 @@ export const App = () => {
 
   const ready = isAuthenticated && chain?.shortName === "maticmum";
 
+  const ready = isAuthenticated && chain?.shortName === "maticmum";
+
+  const login = async () => {
+    if (!isAuthenticated && !isAuthenticating) {
+      try {
+        await authenticate({ signingMessage: "Log into nolandia!" });
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  };
+
+  const logOut = async () => {
+    await logout();
+  };
+
   return (
     <div className="App">
       <PlotDataContext.Provider
@@ -104,17 +128,27 @@ export const App = () => {
           combinedProcessedData,
         }}
       >
-        <Routes>
-          <Route path="/" element={<Home />} />
-          {ready && (
-            <>
-              <Route path="buyplot" element={<MintPlot />} />
-              <Route path="myplots" element={<ListPlots />} />
-              <Route path="draw" element={<DrawPixels />} />
-            </>
-          )}
-          <Route path="*" element={<Home />} />
-        </Routes>
+        <div className="container">
+          <Header
+            login={login}
+            logout={logOut}
+            isAuth={isAuthenticated || isAuthenticating}
+          />
+          <Routes>
+            <Route path="/" element={<Home />} />
+            {ready && (
+              <>
+                <Route path="buyplot" element={<MintPlot />} />
+                <Route path="myplots" element={<ListPlots />} />
+                <Route path="draw" element={<DrawPixels />}>
+                  <Route path=":plotId" element={<DrawPixels />} />
+                </Route>
+              </>
+            )}
+            <Route path="*" element={<Home />} />
+          </Routes>
+        </div>
+        <Footer />
       </PlotDataContext.Provider>
     </div>
   );

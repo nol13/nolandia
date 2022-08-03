@@ -2,9 +2,8 @@
 @import '../../global';
 
 .header {
-  padding: 15px 0;
+  padding: 9px 0;
   box-shadow: $main-shadow;
-  margin-bottom: 15px;
 }
 
 .container {
@@ -14,9 +13,25 @@
 }
 
 .logo {
+  display: flex;
   font-family: $custom-font;
   font-size: $logo-size;
-  color: #7B3FE4;
+  color: $main-color;
 }
 
+.headerLink {
+  margin-right: 18px;
+}
+
+.letter {
+  background: $main-color;
+  color: $text-color-additional;
+  width: 25px;
+  height: 25px;
+  border-radius: 4px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-right: 2px;
+}
 

@@ -1,0 +1,16 @@
+@import "../../variables";
+
+.canvasContainer {
+  canvas {
+    border: 1px solid black;
+  }
+}
+
+.colorBtn {
+  width: 30px;
+  height: 30px;
+  border-radius: 4px;
+  margin: 0 1.5px;
+  cursor: pointer;
+  box-shadow: $addition-shadow;
+}

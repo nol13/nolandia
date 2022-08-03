@@ -7,9 +7,18 @@
   outline: none;
 }
 
+html, body {
+  height: 100%;
+}
+
 body {
   font-family: $main-font;
   font-size: $standard-fz;
+  position: relative;
+}
+
+ul, ol {
+  list-style: none;
 }
 
 button {

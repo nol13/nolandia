@@ -1,4 +1,18 @@
 :global {
+  #root {
+    height: 100%;
+  }
+
+  .App {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .container {
+    flex: 1 0 auto;
+  }
+
   .wrapper {
     max-width: 1120px;
     padding: 0 30px;
@@ -18,6 +32,16 @@
     &:hover {
       transform: scale(1.06);
     }
+  }
+
+  // popup
+  .popup-overlay {
+    backdrop-filter: blur(5px);
+    cursor: pointer;
+  }
+
+  .popup-content {
+    background: transparent;
   }
 }
 

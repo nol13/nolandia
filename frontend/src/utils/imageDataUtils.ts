@@ -9,6 +9,7 @@ export interface plot {
     y2: number,
     owner?: string
 }
+
 export interface plotImgData {
     plotId: number,
     imageData: number[]

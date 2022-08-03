@@ -1,7 +1,6 @@
 import React from "react";
 import { useMoralis } from "react-moralis";
 import { useChain } from "react-moralis";
-import { Link } from "react-router-dom";
 
 import { Nolandia } from "../Nolandia/Nolandia";
 import Header from "../Header/Header";
