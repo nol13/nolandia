@@ -120,7 +120,7 @@ export const MintPlot = () => {
                 const { x, y } = point1;
                 if (!parcelsOwned?.[y]?.[x]) {
                     ctx.fillStyle = '#7B3FE4';
-                    ctx.fillRect(x * 8, y * 8, 8, 8);
+                    ctx.fillRect(x * 8 + 1, y * 8 + 1, 7, 7);
                     //setNumSelected(1);
                     toast(`You have selected a parcel: ${1}x${1}
                     Coordinates: (${x}, ${y}) - (${x + 1}, ${y + 1})`);
@@ -158,7 +158,7 @@ export const MintPlot = () => {
                                 return;
                             }
                             ctx.fillStyle = '#7B3FE4';
-                            ctx.fillRect(i * 8 - 1, j * 8 - 1, 7, 7);
+                            ctx.fillRect(i * 8 + 1, j * 8 + 1, 7, 7);
                         }
                     }
                     toast(`You have selected a parcel: ${x2 - x1 + 1}x${y2 - y1 + 1}
@@ -260,9 +260,9 @@ export const MintPlot = () => {
                 }
             }
         } else if (point1) {
-            top = -15;
-            left = 18;
-            arrowPos = 'leftTop';
+            top = 42;
+            left = 40;
+            arrowPos = 'rightBottom';
         }
 
         return { left, top, arrowPos };
