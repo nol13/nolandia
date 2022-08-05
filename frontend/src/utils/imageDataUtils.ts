@@ -71,10 +71,7 @@ export const combineAndProcessPlotData = (plots: plot[], plotImageData: plotImgD
     for (const plotImgObj of plotImageData) {
         const data = plotData[plotImgObj.plotId]
         if (data) {
-            if (!data.updatedTime || data.updatedTime < (plotImgObj?.updatedTime || Infinity)) {
-                data.imageData = plotImgObj.imageData;
-                data.updatedTime = plotImgObj.updatedTime
-            }
+            data.imageData = plotImgObj.imageData;
         }
     }
 

@@ -89,6 +89,7 @@ export const MintPlot = () => {
     }, [error])
 
     useEffect(() => {
+        console.log('HEH')
         if (mappedPlotData) {
             const newParcelsOwned = Array(128).map(() => Array(128));
             for (const plot of mappedPlotData) {
@@ -227,6 +228,8 @@ export const MintPlot = () => {
                     msgValue: `${value}`
                 }
                 runContractFunction({ params: options }).catch(e => console.log(e));
+                setPoint1(undefined);
+                setPoint2(undefined);
             }
         }
     };

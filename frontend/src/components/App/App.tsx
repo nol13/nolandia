@@ -32,8 +32,8 @@ export const App = () => {
     const { isWeb3Enabled, enableWeb3, isAuthenticated, isWeb3EnableLoading, logout, isAuthenticating, authenticate } = useMoralis();
     const { chain } = useChain();
 
-    const { data: mintData, error: mintError, isLoading: mintsLoading } = useMoralisQuery("Mints3");
-    const { data: pixelData, error: pixelError, isLoading: pixelsLoading } = useMoralisQuery("PlotData");
+    const { data: mintData, error: mintError, isLoading: mintsLoading } = useMoralisQuery("Mints3", q => q, [], {live: true});
+    const { data: pixelData, error: pixelError, isLoading: pixelsLoading } = useMoralisQuery("PlotData", q => q, [], {live: true});
 
     useEffect(() => {
         if (isAuthenticated && !isWeb3Enabled && !isWeb3EnableLoading) enableWeb3();
