@@ -89,7 +89,6 @@ export const MintPlot = () => {
     }, [error])
 
     useEffect(() => {
-        console.log('HEH')
         if (mappedPlotData) {
             const newParcelsOwned = Array(128).map(() => Array(128));
             for (const plot of mappedPlotData) {
