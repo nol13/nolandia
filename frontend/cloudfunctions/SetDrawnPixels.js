@@ -42,7 +42,7 @@ Moralis.Cloud.define("SetDrawnPixels", async (request) => {
 
             const Mints = Moralis.Object.extend("Mints3");
             const mintQuery = new Moralis.Query(Mints);
-            mintQuery.equalTo("plotId", plotId.toString());
+            mintQuery.equalTo("plotId_string", plotId.toString());
             const plotToDrawInfo = await mintQuery.first();
 
             if (!plotToDrawInfo) return "plot doesnt exist";

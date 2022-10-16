@@ -19,7 +19,7 @@ export const ListPlots = () => {
 
     const { user } = useMoralis();
     const address = user?.get("ethAddress");
-    const myPlots = useMemo(() => mintData?.filter(plot => plot.get("plotOwner") === address), [address]);
+    const myPlots = useMemo(() => mintData?.filter(plot => plot.get("plotOwner")?.toLowerCase() === address), [address, mintData]);
 
 
     if (mintError || pixelError) {
@@ -37,14 +37,14 @@ export const ListPlots = () => {
                 {myPlots?.length ? (
                     myPlots?.map((plot) => (
                         <PlotItem
-                            key={plot.get("plotId")}
-                            plotId={plot.get("plotId")}
+                            key={plot.get("plotId_string")}
+                            plotId={plot.get("plotId_string")}
                             plotOwner={plot.get("plotOwner")}
                             x1={plot.get("x1")}
                             y1={plot.get("y1")}
                             x2={plot.get("x2")}
                             y2={plot.get("y2")}
-                            imageData={combinedProcessedData?.[plot.get("plotId")].imageData}
+                            imageData={combinedProcessedData?.[plot.get("plotId_string")].imageData}
                         />
                     ))
                 ) : (

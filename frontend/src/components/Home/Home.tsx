@@ -1,6 +1,7 @@
 import React from 'react';
 import { useMoralis } from "react-moralis";
 import { useChain } from "react-moralis";
+import { useMoralisCloudFunction } from "react-moralis";
 
 import { Nolandia } from '../Nolandia/Nolandia';
 

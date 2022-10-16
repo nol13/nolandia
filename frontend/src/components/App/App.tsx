@@ -1,6 +1,6 @@
 
-import React, { useEffect, useMemo } from "react";
-import { useMoralis, useChain, useMoralisQuery, useMoralisCloudFunction } from "react-moralis";
+import React, { useEffect, useMemo, useState } from "react";
+import { useMoralis, useChain, useMoralisQuery /* , useMoralisCloudFunction */ } from "react-moralis";
 import type { Moralis } from 'moralis';
 import { Routes, Route } from "react-router-dom";
 import { Home } from "../Home/Home";
@@ -29,20 +29,22 @@ export interface PlotDataContextType {
 }
 
 export const App = () => {
-    const { isWeb3Enabled, enableWeb3, isAuthenticated, isWeb3EnableLoading, logout, isAuthenticating, authenticate } = useMoralis();
+    const { Moralis, isWeb3Enabled, enableWeb3, isAuthenticated, isWeb3EnableLoading, /* logout, /*isAuthenticating,*/ authenticate } = useMoralis();
     const { chain } = useChain();
 
+    const [authError, setAuthError] = useState<string>();
+    const [isAuthenticating, setIsAuthenticating] = useState(false);
     const { data: mintData, error: mintError, isLoading: mintsLoading } = useMoralisQuery("Mints3", q => q, [], {live: true});
     const { data: pixelData, error: pixelError, isLoading: pixelsLoading } = useMoralisQuery("PlotData", q => q, [], {live: true});
 
     useEffect(() => {
         if (isAuthenticated && !isWeb3Enabled && !isWeb3EnableLoading) enableWeb3();
-    }, [isAuthenticated, isWeb3Enabled]);
+    }, [enableWeb3, isAuthenticated, isWeb3EnableLoading, isWeb3Enabled]);
 
     const mappedPlotData = useMemo(() => {
         if (!mintData) return;
         return mintData.map(d => ({
-            plotId: d.get("plotId"),
+            plotId: d.get("plotId_string"),
             x1: d.get("x1"),
             y1: d.get("y1"),
             x2: d.get("x2"),
@@ -63,22 +65,59 @@ export const App = () => {
     const imageData = useMemo(() => {
         if (!mappedPlotData || !mappedPixelData) return defaultImgData;
         return getPlotImageData(Object.values(combinedProcessedData));
-    }, [combinedProcessedData]);
+    }, [combinedProcessedData, mappedPixelData, mappedPlotData]);
 
     const ready = isAuthenticated && chain?.shortName === "maticmum";
 
-    const login = async () => {
+    const handleAuth = async (provider: Moralis.Web3ProviderType) => {
+        try {
+            setAuthError(undefined);
+            setIsAuthenticating(true);
+
+            // Enable web3 to get user address and chain
+            await enableWeb3({ throwOnError: true, provider });
+            const { account, chainId } = Moralis;
+
+            // console.log({account, chainId})
+
+            if (!account) {
+                throw new Error('Connecting to chain failed, as no connected account was found');
+            }
+            if (!chainId) {
+                throw new Error('Connecting to chain failed, as no connected chain was found');
+            }
+
+            // Get message to sign from the auth api
+            const { message } = await Moralis.Cloud.run('requestMessage', {
+                address: account,
+                chain: parseInt(chainId, 16),
+                network: 'evm',
+            });
+
+            // Authenticate and login via parse
+            await authenticate({
+                signingMessage: message,
+                throwOnError: true,
+            });
+        } catch (error) {
+            setAuthError("auth error");
+        } finally {
+            setIsAuthenticating(false);
+        }
+    };
+
+    /* const login = async () => {
         if (!isAuthenticated && !isAuthenticating) {
             try {
                 await authenticate({ signingMessage: "Log into nolandia!" })
             } catch (error) {
-                console.log(error);
+                console.log(1, error);
             }
         }
-    }
+    } */
 
     const logOut = async () => {
-        await logout();
+        // await logout();
     }
 
     return (
@@ -96,7 +135,7 @@ export const App = () => {
                 combinedProcessedData
                 }}>
                 <div className="container">
-                    <Header login={login} logout={logOut} isAuth={isAuthenticated || isAuthenticating} />
+                    <Header login={() => handleAuth("metamask")} logout={logOut} isAuth={isAuthenticated || isAuthenticating} />
                     <Routes>
                         <Route path="/" element={<Home />} />
                         {ready && (<>

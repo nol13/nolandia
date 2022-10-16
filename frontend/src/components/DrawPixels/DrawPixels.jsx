@@ -47,19 +47,19 @@ export const DrawPixels = () => {
             const width = (x2 - x1) * 8;
             setNumberOfPx(height * width);
 
-            // const minDim = Math.min(height, width);
-            // const zoom = Math.floor(Math.max((minDim / 8) * 2));
+            const minDim = Math.min(height, width);
+            const zoom = Math.floor(Math.max((minDim / 8) * 2));
 
             pixEditorRef.current = new PixelEditor({
                 width,
                 height,
-                zoom: 16,
+                zoom, //: 16,
                 container: canvasRef.current,
                 colors,
                 currentColor: 1
             });
         }
-    }, [plotId]);
+    }, [plotId, combinedProcessedData]);
 
 
 
