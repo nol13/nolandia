@@ -87,9 +87,14 @@ describe("Token contract", function () {
         const plotId2 = await hardhatToken.setPixels(x, 1, { value: "" });
         const receipt1 = await plotId2.wait();
         expect(receipt1.events[0].event).to.equal("PlotPixelsSet");
+       
       } catch(e) {
         expect('should not error').to.equal(1);
+        console.log(e)
+        
       }
+      const plotId23 = await hardhatToken.tokenURI(1, { value: "" });
+      console.log(plotId23, 2)
     });
 
   });

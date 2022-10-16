@@ -49,9 +49,13 @@ contract Nolandia is ERC721, Ownable, PaymentSplitter /* , ERC721Enumerable, ERC
 
      uint256[128][128] public parcels;
      mapping(uint256 => plot) public plots;
+     string internal _baseUriVal;
 
     
-    constructor(address[] memory _payees, uint256[] memory _shares) ERC721("Nolandia", "NOLAND") PaymentSplitter(_payees, _shares) payable {}
+    constructor(address[] memory _payees, uint256[] memory _shares, string memory initialBaseUri, uint8[][4] memory prePlots) ERC721("Nolandia", "NOLAND") PaymentSplitter(_payees, _shares) payable {
+        _baseUriVal = initialBaseUri;
+        preMintPlots(prePlots);
+    }
 
     function allParcelsAvailable (uint8 x1, uint8 y1, uint8 x2, uint8 y2) internal view returns (bool) {
         for (uint8 i = x1; i < x2; i++) {
@@ -89,6 +93,29 @@ contract Nolandia is ERC721, Ownable, PaymentSplitter /* , ERC721Enumerable, ERC
         return plotId;
     }
 
+    function preMintPlots(uint8[][4] memory prePlots) internal
+    {
+        for (uint8 i = 0; i < prePlots.length; i++) {
+            uint8 x1 = prePlots[i][0];
+            uint8 y1 = prePlots[i][1];
+            uint8 x2 = prePlots[i][2];
+            uint8 y2 = prePlots[i][3];
+            
+        require(x1 >= 0 && y1 >= 0, "first coord 0 or bigger");
+        require(x2 <= 128 && y2 <= 128, "second coord 128 or smaller");
+        require(x1 < x2 && y1 < y2, "2nd coord smaller than first coord");
+        require(allParcelsAvailable(x1, y1, x2, y2) == true, 'a selected parcel is already owned');
+         _tokenIds.increment();
+        uint256 plotId = _tokenIds.current();
+        setParcelsOwned(x1, y1, x2, y2, plotId);
+        _safeMint(msg.sender, plotId);
+        plots[plotId] = plot({x1: x1, y1: y1, x2: x2, y2: y2, plotId: plotId, plotOwner: msg.sender});
+        emit PlotPurchased(plotId, msg.sender, x1, y1, x2, y2);
+        }
+        
+        // return plotId;
+    }
+
      /* function setPixels (uint8[] calldata pixels, uint256 plotId) external {
         require(ownerOf(plotId) == msg.sender, "u dont own this");
         plot memory myPlot = plots[plotId];
@@ -99,11 +126,16 @@ contract Nolandia is ERC721, Ownable, PaymentSplitter /* , ERC721Enumerable, ERC
         emit PlotPixelsSet(plotId, pixels);
     } */
 
-    function _baseURI() internal pure override returns (string memory) {
-        return "data:application/json;base64,";
+    function _baseURI() internal view override returns (string memory) {
+        //return "data:application/json;base64,";
+        return _baseUriVal;
     }
 
-    function tokenURI(uint256 tokenId) public view virtual override returns (string memory) {
+    function setBaseURI(string calldata newBaseUri) public onlyOwner {
+        _baseUriVal = newBaseUri;
+    }
+
+    /* function tokenURI(uint256 tokenId) public view virtual override returns (string memory) {
         require(_exists(tokenId), "ERC721Metadata: URI query for nonexistent token");
         string memory imageURI = "myImageUrixxxxxx";
         return
@@ -131,5 +163,5 @@ contract Nolandia is ERC721, Ownable, PaymentSplitter /* , ERC721Enumerable, ERC
                     )
                 )
             );
-    }
+    } */
 }
