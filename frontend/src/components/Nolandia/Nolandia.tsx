@@ -52,11 +52,15 @@ export const Nolandia = () => {
         }
     }
 
+    const resetZoom = () => {
+        paper.view.zoom = 1;
+    }
+
     const handleWheel = (event: React.WheelEvent) => {
         const oldZoom = paper.view.zoom;
         let newZoom = paper.view.zoom;
 
-        if (event.deltaY > 0) {
+        if (event.deltaY < 0) {
             newZoom = paper.view.zoom * 1.05;
         } else {
             newZoom = paper.view.zoom * 0.95;
@@ -77,11 +81,11 @@ export const Nolandia = () => {
         paper.view.center = paper.view.center.add(offset);
     }
 
-    if (!imageData?.length) return (<div>Loading Nolandia...</div>);
+    if (!imageData?.length) return (<div className={styles.loading}>Loading Nolandia Please Wait...</div>);
 
     return (
         <div>
-            {!imageData?.length && (<div>Loading Nolandia...</div>)}
+            <button className={styles.resetButton} onClick={resetZoom}>Reset Zoom</button>
             <canvas data-paper-hidpi="off" data-paper-resize="true" onWheel={handleWheel} ref={canvasRef} id={styles.canvas} />
         </div>
     )

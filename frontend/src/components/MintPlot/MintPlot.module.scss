@@ -13,6 +13,12 @@
 #canvas {
   background: $bg-color-main;
   cursor: pointer;
+  border: 1px solid $main-color;
+}
+
+.instructions { 
+  display: flex;
+  justify-content: center;
 }
 
 .mintBtn {
@@ -25,7 +31,7 @@
   color: $text-color-additional;
   transition: all .21s linear;
   cursor: pointer;
-  animation: showBtn .15s linear, shake 0.82s cubic-bezier(.36, .07, .19, .97) both 5s;
+  animation: showBtn .15s linear, shake 0.82s cubic-bezier(.36, .07, .19, .97) both 3s;
   box-shadow: 0 8px 18px rgba(0, 0, 0, .4);
 
   &:hover,

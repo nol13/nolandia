@@ -29,11 +29,11 @@ export interface PlotDataContextType {
 }
 
 export const App = () => {
-    const { Moralis, isWeb3Enabled, enableWeb3, isAuthenticated, isWeb3EnableLoading, /* logout, /*isAuthenticating,*/ authenticate } = useMoralis();
+    const { Moralis, isWeb3Enabled, enableWeb3, isAuthenticated, isWeb3EnableLoading, /* logout, /*isAuthenticating,*/ authenticate, logout } = useMoralis();
     const { chain } = useChain();
 
     const [authError, setAuthError] = useState<string>();
-    const [isAuthenticating, setIsAuthenticating] = useState(false);
+    // const [isAuthenticating, setIsAuthenticating] = useState(false);
     const { data: mintData, error: mintError, isLoading: mintsLoading } = useMoralisQuery("Mints3", q => q, [], {live: true});
     const { data: pixelData, error: pixelError, isLoading: pixelsLoading } = useMoralisQuery("PlotData", q => q, [], {live: true});
 
@@ -72,7 +72,7 @@ export const App = () => {
     const handleAuth = async (provider: Moralis.Web3ProviderType) => {
         try {
             setAuthError(undefined);
-            setIsAuthenticating(true);
+            //setIsAuthenticating(true);
 
             // Enable web3 to get user address and chain
             await enableWeb3({ throwOnError: true, provider });
@@ -102,7 +102,7 @@ export const App = () => {
         } catch (error) {
             setAuthError("auth error");
         } finally {
-            setIsAuthenticating(false);
+            //setIsAuthenticating(false);
         }
     };
 
@@ -117,7 +117,7 @@ export const App = () => {
     } */
 
     const logOut = async () => {
-        // await logout();
+        await logout();
     }
 
     return (
@@ -135,7 +135,7 @@ export const App = () => {
                 combinedProcessedData
                 }}>
                 <div className="container">
-                    <Header login={() => handleAuth("metamask")} logout={logOut} isAuth={isAuthenticated || isAuthenticating} />
+                    <Header login={() => handleAuth("metamask")} logout={logOut} isAuth={isAuthenticated} />
                     <Routes>
                         <Route path="/" element={<Home />} />
                         {ready && (<>

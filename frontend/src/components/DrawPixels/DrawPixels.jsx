@@ -48,7 +48,7 @@ export const DrawPixels = () => {
             setNumberOfPx(height * width);
 
             const minDim = Math.min(height, width);
-            const zoom = Math.floor(Math.max((minDim / 8) * 2));
+            const zoom = Math.floor(Math.max(16, (minDim / 8) * 2));
 
             pixEditorRef.current = new PixelEditor({
                 width,
