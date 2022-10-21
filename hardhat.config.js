@@ -33,6 +33,12 @@ module.exports = {
       accounts: [ROPSTEN_PRIVATE_KEY],
       chainId: 80001,
       gasPrice: 35000000000,
+    },
+    zksync: {
+      url: "https://zksync2-testnet.zksync.dev",
+      accounts: [ROPSTEN_PRIVATE_KEY],
+      chainId: 280,
+      //gasPrice: 35000000000,
     }
   }
 };

@@ -295,7 +295,8 @@ export const MintPlot = () => {
             {/*{showOwnedError && <div style={{color: 'red'}}>Can't buy owned!</div>}*/}
             {/*<div>1: {point1?.x}, {point1?.y} 2: {point2?.x}, {point2?.y} - Parcels Selected: {numSelected}</div>*/}
             <ToastContainer />
-            <div className={styles.instructions}>Click once to select a one parcel (8px by 8px) plot. Or click a 2nd parcel to select a multiple parcel plot. Each px cost 0.001 ether.</div>
+            <div className={styles.instructions}>Click once to select a one parcel plot. Or click a 2nd parcel to select a multiple parcel plot.</div>
+            <div className={styles.instructions}>Each 8px by 8px parcel costs 0.064 ether, 0.001 ether per pixel.</div>
             <div className={styles.canvasContainer}>
                 <canvas className={styles.plotCanvas} width="1024" height="1024"  ref={plotGridRef} id={styles.canvas} onClick={selectParcel}/>
                 {point1 && clickPos && (

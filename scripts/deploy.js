@@ -25,7 +25,7 @@ async function main() {
 
   const Token = await ethers.getContractFactory("Nolandia");
   console.log(Token, 1);
-  const token = await Token.deploy(["0x973DB30532c11e8f4371e95Be9432AbeC97D1c4B", "0xe0e0104dd229C3A99B089d074DB9a4F89Db62559"], [50, 50]);
+  const token = await Token.deploy(["0x973DB30532c11e8f4371e95Be9432AbeC97D1c4B", "0xe0e0104dd229C3A99B089d074DB9a4F89Db62559"], [70, 30], 'https://nolandia.dog/tokenUri/', "0x15eee579713d1D219201B661671B145b0459FfBe");
   console.log(token, 2);
   await token.deployed();
   console.log(token, 3);

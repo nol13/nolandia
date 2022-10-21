@@ -34,8 +34,9 @@ export const App = () => {
 
     const [authError, setAuthError] = useState<string>();
     // const [isAuthenticating, setIsAuthenticating] = useState(false);
-    const { data: mintData, error: mintError, isLoading: mintsLoading } = useMoralisQuery("Mints3", q => q, [], {live: true});
-    const { data: pixelData, error: pixelError, isLoading: pixelsLoading } = useMoralisQuery("PlotData", q => q, [], {live: true});
+    const prefix = process.env.REACT_APP_DATA_PREFIX ? process.env.REACT_APP_DATA_PREFIX + '-' : '';
+    const { data: mintData, error: mintError, isLoading: mintsLoading } = useMoralisQuery(prefix + "Mints3", q => q, [], {live: true});
+    const { data: pixelData, error: pixelError, isLoading: pixelsLoading } = useMoralisQuery(prefix + "PlotData", q => q, [], {live: true});
 
     useEffect(() => {
         if (isAuthenticated && !isWeb3Enabled && !isWeb3EnableLoading) enableWeb3();
@@ -63,7 +64,7 @@ export const App = () => {
     }, [mappedPixelData, mappedPlotData]);
 
     const imageData = useMemo(() => {
-        if (!mappedPlotData || !mappedPixelData) return defaultImgData;
+        if (!mappedPlotData?.length || !mappedPixelData?.length) return defaultImgData;
         return getPlotImageData(Object.values(combinedProcessedData));
     }, [combinedProcessedData, mappedPixelData, mappedPlotData]);
 

@@ -6,7 +6,7 @@ import { PlotDataContextType, PlotDataContext } from '../App/App';
 import styles from './Nolandia.module.scss';
 
 export const Nolandia = () => {
-    const { imageData } = useContext<PlotDataContextType>(PlotDataContext);
+    const { imageData, mintsLoading, pixelsLoading } = useContext<PlotDataContextType>(PlotDataContext);
     const canvasRef = useRef<HTMLCanvasElement>(null);
 
     useEffect(() => {
@@ -81,7 +81,10 @@ export const Nolandia = () => {
         paper.view.center = paper.view.center.add(offset);
     }
 
-    if (!imageData?.length) return (<div className={styles.loading}>Loading Nolandia Please Wait...</div>);
+    console.log(process.env.REACT_APP_DATA_PREFIX)
+
+    // if (!imageData?.length) return (<div className={styles.loading}>Loading Nolandia Please Wait...</div>);
+    if (mintsLoading || pixelsLoading) return (<div className={styles.loading}>Loading Nolandia Please Wait...</div>);
 
     return (
         <div>

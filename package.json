@@ -12,6 +12,7 @@
     "deploy-contract": "hardhat run scripts/deploy.js --network localhost",
     "deploy-mumbai": "hardhat run scripts/deploy.js --network mumbai",
     "deploy-ropsten": "hardhat run scripts/deploy.js --network ropsten",
+    "deploy-zkalpha": "hardhat run scripts/deploy.js --network zksync",
     "frontend": "npm start --prefix frontend",
     "frontend-lint": "npm run lint --prefix frontend",
     "test": "hardhat test"

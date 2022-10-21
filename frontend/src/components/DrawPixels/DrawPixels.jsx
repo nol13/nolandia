@@ -67,7 +67,8 @@ export const DrawPixels = () => {
     const draw = () => {
         const imageData = pixEditorRef.current?.toImageData();
         if (imageData?.data?.length) {
-            drawPx({ params: { plotId, imageData: Array.from(imageData.data) } });
+            // eslint-disable-next-line no-undef
+            drawPx({ params: { plotId, imageData: Array.from(imageData.data), prefix: process.env.REACT_APP_DATA_PREFIX } });
         }
     };
 
@@ -76,10 +77,10 @@ export const DrawPixels = () => {
     }
 
     return (
-        <div>
-            <h1>Draw on plot with default pixels {plotId}</h1>
-            <div>plot to draw: {plotId}, Total Px: {numberOfPx}</div>
-            <div><button disabled={isFetching || isLoading} onClick={() => draw()}>Draw some pixels!</button></div>
+        <div className={styles.container}>
+            <h1>Draw on plot #{plotId}</h1>
+            <div>Total Px: {numberOfPx}</div>
+            <div><button className={styles.drawButton} disabled={isFetching || isLoading} onClick={() => draw()}>Save Drawing!</button></div>
             <p>Colors:</p>
             {colors.map((color, idx) => (
               <button className={styles.colorBtn} onClick={() => colorClicked(idx)} style={{ background: `rgb(${color.join(', ')})` }}/>

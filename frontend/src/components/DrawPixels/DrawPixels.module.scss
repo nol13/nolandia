@@ -14,3 +14,24 @@
   cursor: pointer;
   box-shadow: $addition-shadow;
 }
+
+.container {
+  :global(.pE__tool) {
+    padding: 6px;
+  }
+
+  :global(.pE__menu-item) {
+    margin: 6px;
+    padding: 5px;
+    border: 1px solid black;
+    border-radius: 3px;
+  }
+
+  :global(.pE__tool-icon) {
+    margin-left: 3px;
+  }
+
+  .drawButton {
+    padding: 5px;
+  }
+}
