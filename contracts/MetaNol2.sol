@@ -18,7 +18,7 @@ contract Nolandia is
     Counters.Counter private _tokenIds;
 
     //uint256 internal ethFactor = 1000000000000000000;
-    uint256 internal ethFactor = 100;
+    uint256 internal ethFactor = 1;
     uint8 pxInParcel = 64;
     uint8 valsPerPixel = 4;
     bool preMintOpen = true;
@@ -32,7 +32,7 @@ contract Nolandia is
         address plotOwner;
     }
 
-    event PlotPixelsSet(uint256 indexed plotId, uint8[] imageData);
+    event PlotPixelsSet(uint256 indexed plotId, uint32 startIndex, uint8[] imageData);
 
     event PlotPurchased(
         uint256 indexed plotId,
@@ -122,7 +122,8 @@ contract Nolandia is
         "coal",
         "tin",
         "cobalt",
-        "cobalt"
+        "cobalt",
+        "onyx"
     ];
 
     string[] dominantMegaFauna = [
@@ -321,14 +322,14 @@ contract Nolandia is
         return plotId;
     }
 
-    function setPixels (uint8[] calldata pixels, uint256 plotId) external {
+    function setPixels (uint8[] calldata pixels, uint32 startIndex, uint256 plotId) external {
         require(ownerOf(plotId) == msg.sender, "u dont own this");
         plot memory myPlot = plots[plotId];
         uint32 xdiff = myPlot.x2 - myPlot.x1;
         uint32 ydiff = myPlot.y2 - myPlot.y1;
         uint32 totalPxInPlot = (xdiff * ydiff * pxInParcel * valsPerPixel);
-        require(totalPxInPlot == pixels.length, "wrong amount of px");
-        emit PlotPixelsSet(plotId, pixels);
+        require(totalPxInPlot - startIndex == pixels.length, "wrong amount of px");
+        emit PlotPixelsSet(plotId, startIndex, pixels);
     }
 
     function _baseURI() internal view override returns (string memory) {
