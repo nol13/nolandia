@@ -3,6 +3,9 @@
 
 const { expect } = require("chai");
 
+const weiCostPerPx = 1000000000000000;
+const baseUri = "ftp://lol.com/";
+
 describe("Token contract", function () {
 
   let Token;
@@ -21,7 +24,7 @@ describe("Token contract", function () {
     // To deploy our contract, we just have to call Token.deploy() and await
     // for it to be deployed(), which happens onces its transaction has been
     // mined.
-    hardhatToken = await Token.deploy([deployer.address, "0xe0e0104dd229C3A99B089d074DB9a4F89Db62559"], [50, 50], "ftp://lol.com/", newOwner.address);
+    hardhatToken = await Token.deploy([deployer.address, "0xe0e0104dd229C3A99B089d074DB9a4F89Db62559"], [75, 25], baseUri, newOwner.address);
     await hardhatToken.deployed();
 
     // We can interact with the contract by calling `hardhatToken.method()`
@@ -39,44 +42,20 @@ describe("Token contract", function () {
       expect(await hardhatToken.provider.getBalance(hardhatToken.address)).to.equal(0);
       //const plotId = await hardhatToken.buyPlot(0, 0, 2, 2, { value: ethers.utils.parseEther("256") });
       //const plotId2 = await hardhatToken.buyPlot(2, 0, 3, 1, { value: ethers.utils.parseEther("64") });
-      const plotId = await hardhatToken.buyPlot(0, 0, 2, 2, { value: "256" });
+      const plotId = await hardhatToken.buyPlot(0, 0, 2, 2, { value: (256 * weiCostPerPx).toString() });
       const receipt1 = await plotId.wait();
-      const plotId2 = await hardhatToken.buyPlot(2, 0, 3, 1, { value: "64" });
+      const plotId2 = await hardhatToken.buyPlot(2, 0, 3, 1, { value: (64 * weiCostPerPx).toString() });
       
       expect(await hardhatToken.provider.getBalance(hardhatToken.address)).to.equal(0);
       expect(await hardhatToken.parcels(0, 0)).to.equal(1);
       expect(await hardhatToken.parcels(2, 0)).to.equal(2);
 
-      //console.log(await hardhatToken.tokenURI(1));
+      expect(await hardhatToken.tokenURI(1)).to.equal(baseUri + '1');
 
       const bal1 = await hardhatToken.provider.getBalance(hardhatToken.address);
-      //console.log(receipt1)
 
       expect(receipt1.events[0].event).to.equal("Transfer");
       expect(receipt1.events[1].event).to.equal("PlotPurchased");
-
-      /* try {
-        const x = await hardhatToken['release(address)']("0x5acc84a3e955bdd76467d3348077d003f00ffb97")
-        expect('should error before here').to.equal(1);
-      } catch {
-        expect(await hardhatToken.provider.getBalance(hardhatToken.address)).to.not.equal(0);
-      } */
-
-      /* try {
-        const x = await hardhatToken['release(address)'](owner.address);
-      } catch {
-        expect('should not error').to.equal(1);
-      }
-      
-      expect(await hardhatToken.provider.getBalance(hardhatToken.address)).not.to.equal(0);
-      const bal2 = await hardhatToken.provider.getBalance(hardhatToken.address);
-      expect(bal1.gt(bal2)).to.equal(true);
-
-      try {
-        const x = await hardhatToken['release(address)']("0xe0e0104dd229C3A99B089d074DB9a4F89Db62559");
-      } catch {
-        expect('should not error').to.equal(1);
-      } */
 
       expect(await hardhatToken.provider.getBalance(hardhatToken.address)).to.equal(0);
 
@@ -85,7 +64,7 @@ describe("Token contract", function () {
     it("Should draw pixels", async function async () {
       try {
         const x = Array(256).fill(169);
-        const plotId1 = await hardhatToken.buyPlot(2, 2, 3, 3, { value: "64" });
+        const plotId1 = await hardhatToken.buyPlot(2, 2, 3, 3, { value: (64 * weiCostPerPx).toString() });
         const plotId2 = await hardhatToken.setPixels(x, 0, 1, { value: "" });
         const receipt1 = await plotId2.wait();
         expect(receipt1.events[0].event).to.equal("PlotPixelsSet");
@@ -124,7 +103,6 @@ describe("Token contract", function () {
         failed = true;
       }
       expect(failed).to.equal(false)
-      // console.log(newOwner)
     })
 
   });

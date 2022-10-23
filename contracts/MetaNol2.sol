@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.9;
 
-//import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/finance/PaymentSplitter.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Royalty.sol";
@@ -17,8 +16,9 @@ contract Nolandia is
     using Counters for Counters.Counter;
     Counters.Counter private _tokenIds;
 
-    //uint256 internal ethFactor = 1000000000000000000;
-    uint256 internal ethFactor = 1;
+    uint256 public weiCostPerPx = 1000000000000000; // 0.001 ether per px
+    // uint256 internal weiCostPerPx = 1000000000000000000; // 1 ether
+    // uint256 internal ethFactor = 1;
     uint8 pxInParcel = 64;
     uint8 valsPerPixel = 4;
     bool preMintOpen = true;
@@ -42,7 +42,7 @@ contract Nolandia is
         uint8 x2,
         uint8 y2,
         uint256 sparkles,
-        string mineral,
+        string resources,
         string landType,
         string megafaunaType
     );
@@ -82,17 +82,19 @@ contract Nolandia is
         "prarie",
         "prarie",
         "space",
-        "candyland"
+        "candyland",
+        "artificial island",
+        "artificial island"
     ];
 
-    string[] minerals = [
+    string[] resources = [
         "gold",
         "silver",
         "gold",
         "silver",
         "silver",
         "coper",
-        "coper",
+        "wood",
         "coper",
         "coper",
         "iron",
@@ -114,9 +116,10 @@ contract Nolandia is
         "salt",
         "salt",
         "tiberium",
-        "mythril",
-        "coal",
-        "coal",
+        "wood",
+        "wood",
+        "oil",
+        "oil",
         "coal",
         "coal",
         "coal",
@@ -126,7 +129,7 @@ contract Nolandia is
         "onyx"
     ];
 
-    string[] dominantMegaFauna = [
+    string[] dominantMegafauna = [
         "dinosaurs",
         "mammals",
         "mammals",
@@ -236,7 +239,7 @@ contract Nolandia is
         require(x2 <= 128 && y2 <= 128, "second coord 128 or smaller");
         require(x1 < x2 && y1 < y2, "2nd coord smaller than first coord");
         uint256 totalAmt = (x2 - x1) * (y2 - y1);
-        require(totalAmt * ethFactor * pxInParcel == msg.value, "wrong amount");
+        require(totalAmt * weiCostPerPx * pxInParcel == msg.value, "wrong amount");
         _tokenIds.increment();
         uint256 plotId = _tokenIds.current();
         require(
@@ -256,9 +259,9 @@ contract Nolandia is
         });
 
         uint256 sparkles = totalAmt * (randomNum() % 4);
-        string memory mineral = randomItem(minerals);
+        string memory mineral = randomItem(resources);
         string memory landType = randomItem(landTypes);
-        string memory megafaunaType = randomItem(dominantMegaFauna);
+        string memory megafaunaType = randomItem(dominantMegafauna);
 
         emit PlotPurchased(
             plotId,
@@ -304,9 +307,9 @@ contract Nolandia is
 
         uint256 totalAmt = (x2 - x1) * (y2 - y1);
         uint256 sparkles = totalAmt * (randomNum() % 4);
-        string memory mineral = randomItem(minerals);
+        string memory mineral = randomItem(resources);
         string memory landType = randomItem(landTypes);
-        string memory megafaunaType = randomItem(dominantMegaFauna);
+        string memory megafaunaType = randomItem(dominantMegafauna);
         emit PlotPurchased(
             plotId,
             msg.sender,
@@ -344,7 +347,14 @@ contract Nolandia is
         return string(abi.encodePacked(_baseURI(), "contract-meta"));
     }
 
-    function closePreMint() public onlyOwner {
+    function setWeiPerPx(
+        uint256 newPrice
+    ) external onlyOwner {
+        require(preMintOpen == true, "premint already closed");
+        weiCostPerPx = newPrice;
+    }
+
+    function closePreMint() external onlyOwner {
         preMintOpen = false;
     }
 }

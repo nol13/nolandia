@@ -32,7 +32,7 @@ module.exports = {
       url: "https://rpc-mumbai.maticvigil.com",
       accounts: [ROPSTEN_PRIVATE_KEY],
       chainId: 80001,
-      gasPrice: 35000000000,
+      gasPrice: 35000000000
     },
     zksync: {
       url: "https://zksync2-testnet.zksync.dev",
