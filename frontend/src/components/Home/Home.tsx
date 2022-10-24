@@ -87,7 +87,7 @@ export const Home = () => {
                     <br />
                     Please switch your network to Etherium to use the app.
                     <br /><br />
-                    <button onClick={() => switchNetwork(networks[parseInt(process.env.REACT_APP_NETWORK_INDEX || "3")].key)}>Switch to Mumbai</button>
+                    <button onClick={() => switchNetwork(networks[parseInt(process.env.REACT_APP_NETWORK_INDEX || "3")].key)}>Switch to Etherium</button>
                 </div>
             )}
             <Nolandia />
