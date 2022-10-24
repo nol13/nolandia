@@ -20,7 +20,7 @@ const Header = ({
                     <Link className={classnames(styles.headerLink, !isAuth && styles.disabled)} to={isAuth ? `/buyplot` : '#'}>Purchase Plot</Link>
                     {isAuth ?
                         <button className="standard-btn" onClick={logout}>Logout</button> :
-                        <button className="standard-btn" onClick={login}>Connect Wallet</button>
+                        <button className="standard-btn" onClick={login}>Connect to Metamask</button>
                     }
                 </div>
                

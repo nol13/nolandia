@@ -18,14 +18,23 @@ const Footer = () => {
     return (
         <footer className={styles.footer}>
             <div className={classnames("wrapper", styles.footerContainer)}>
-                <p className={styles.copyright}>Copyright &copy; 2022 Nolandia. All Rights Reserved</p>
+                <div className={styles.leftFooter}>
+                    <p className={styles.copyright}>Copyright &copy; 2022 Nolandia</p>
+                    <a target="#" href="https://etherscan.io/address/0x9af06f16135045f1f57fe6edea781f3cd88d72b3">
+                        <img src="./etherscanlogo.png" className={styles.etherscanlogo} />
+                    </a>
+                    <div>
+                        <a target="#" href="https://savelife.in.ua/">Half of proceeds get sent instantly to 🇺🇦</a>
+                    </div>
+
+                </div>
                 <Popup
                     modal
                     nested
                     onClose={() => setCloseState(false)}
                     position='center center'
                     trigger={<button type="button" onClick={() => setCloseState(false)} className={styles.rulesBtn}>Rules</button>
-                }>
+                    }>
                     {/*// @ts-ignore*/}
                     {(close: any) => (
                         <button className={styles.rules} onClick={() => handleClose(close)}>

@@ -15,6 +15,12 @@
   align-items: center;
 }
 
+.leftFooter {
+  display: flex;
+  flex-direction: row;
+
+}
+
 .rulesBtn {
   color: $main-color;
   font-size: 16px;
@@ -91,4 +97,10 @@
     transform: scale(.55) translate(100%, 185%);
     filter: blur(8px);
   }
+}
+
+.etherscanlogo {
+  height: 18px;
+  margin-left: 18px;
+  margin-right: 18px;
 }
