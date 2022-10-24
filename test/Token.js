@@ -65,6 +65,7 @@ describe("Token contract", function () {
     it("Should draw pixels", async function async () {
       try {
         const x = Array(256).fill(169);
+        const y = Array(128).fill(169);
         const plotId1 = await hardhatToken.buyPlot(2, 2, 3, 3, { value: (64 * weiCostPerPx).toString() });
         const plotId2 = await hardhatToken.setPixels(x, 0, 1, { value: "" });
         const receipt1 = await plotId2.wait();
@@ -73,6 +74,9 @@ describe("Token contract", function () {
         const noBal = ethers.utils.formatEther(await ethers.provider.getBalance(newOwner.address));
         const opBal = ethers.utils.formatEther(await ethers.provider.getBalance("0xe0e0104dd229C3A99B089d074DB9a4F89Db62559"));
         console.log({dBal, opBal, noBal})
+
+        await hardhatToken.setPixels(y, 0, 1, { value: "" });
+        await hardhatToken.setPixels(y, 129, 1, { value: "" });
        
       } catch(e) {
         expect('should not error').to.equal(1);

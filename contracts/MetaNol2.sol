@@ -331,7 +331,7 @@ contract Nolandia is
         uint32 xdiff = myPlot.x2 - myPlot.x1;
         uint32 ydiff = myPlot.y2 - myPlot.y1;
         uint32 totalPxInPlot = (xdiff * ydiff * pxInParcel * valsPerPixel);
-        require(totalPxInPlot - startIndex == pixels.length, "wrong amount of px");
+        require(pixels.length + startIndex <= totalPxInPlot, "wrong amount of px");
         emit PlotPixelsSet(plotId, startIndex, pixels);
     }
 
