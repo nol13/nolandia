@@ -12,6 +12,13 @@ const networks = [{
 {
     key: "0x13881",
     value: "Mumbai",
+}, {
+    value: "Ethereum Testnet Görli",
+    key: "0x5"
+},
+{
+    value: "Ethereum Mainnet",
+    key: "0x1"
 }];
 
 export const connectors = [
@@ -63,13 +70,13 @@ export const connectors = [
 export const Home = () => {
 
     const { isAuthenticated, user } = useMoralis();
-    const { switchNetwork, chain } = useChain();
+    const { switchNetwork, chain, /* network, chainId, account */ } = useChain();
 
-    const ready = isAuthenticated && chain?.shortName === "maticmum";
+    const ready = isAuthenticated && chain?.shortName === process.env.REACT_APP_NETWORK_SHORT_NAME;
 
     return (
         <>
-            {/*<div>{account || ''} {chain?.name || ''} {chainId || ""} {network || ""}</div>*/}
+            {/* <div>{account || ''} {chain?.name || ''} {chainId || ""} {network || ""} {chain?.shortName || ""}</div> */}
             {/*<h1>{isAuthenticated && 'Authenticated '}Hello Wyrld!</h1>*/}
             {/*<p>Welcome to Nolandia {user?.get("ethAddress")}!</p>*/}
             {/*{ready && <div style={{ margin: '10px' }}><Link to="buyplot">Buy PlotItem</Link></div>}*/}
@@ -78,9 +85,9 @@ export const Home = () => {
             {isAuthenticated && !ready && (
                 <div>
                     <br />
-                    Please switch your network to Polygon Mumbai to use the app.
+                    Please switch your network to Etherium to use the app.
                     <br /><br />
-                    <button onClick={() => switchNetwork(networks[1].key)}>Switch to Mumbai</button>
+                    <button onClick={() => switchNetwork(networks[parseInt(process.env.REACT_APP_NETWORK_INDEX || "3")].key)}>Switch to Mumbai</button>
                 </div>
             )}
             <Nolandia />

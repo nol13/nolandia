@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, useContext } from "react";
-import { useMoralisCloudFunction} from "react-moralis";
+import { useMoralisCloudFunction } from "react-moralis";
 import PixelEditor from '@potch/pixeleditor/pixeleditor';
 import { useParams } from "react-router-dom";
 
@@ -23,7 +23,7 @@ const colors = [
 ];
 
 export const DrawPixels = () => {
-    const {  fetch: drawPx, isLoading, isFetching } = useMoralisCloudFunction("SetDrawnPixels", );
+    const { fetch: drawPx, isLoading, isFetching } = useMoralisCloudFunction("SetDrawnPixels",);
     const [numberOfPx, setNumberOfPx] = useState();
 
     const pixEditorRef = useRef();
@@ -38,10 +38,10 @@ export const DrawPixels = () => {
         if (pixEditorRef.current) return;
         const plot = combinedProcessedData[plotId];
         if (plot) {
-            const x1=plot.x1;
-            const y1=plot.y1;
-            const x2=plot.x2;
-            const y2=plot.y2;
+            const x1 = plot.x1;
+            const y1 = plot.y1;
+            const x2 = plot.x2;
+            const y2 = plot.y2;
 
             const height = (y2 - y1) * 8;
             const width = (x2 - x1) * 8;
@@ -67,8 +67,13 @@ export const DrawPixels = () => {
     const draw = () => {
         const imageData = pixEditorRef.current?.toImageData();
         if (imageData?.data?.length) {
-            // eslint-disable-next-line no-undef
-            drawPx({ params: { plotId, imageData: Array.from(imageData.data), prefix: process.env.REACT_APP_DATA_PREFIX } });
+            drawPx({ params: {
+                plotId, imageData: Array.from(imageData.data),
+                // eslint-disable-next-line no-undef
+                prefix: process.env.REACT_APP_DATA_PREFIX,
+                // eslint-disable-next-line no-undef
+                chain: process.env.REACT_APP_NETWORK_ID
+            } });
         }
     };
 
@@ -83,7 +88,7 @@ export const DrawPixels = () => {
             <div><button className={styles.drawButton} disabled={isFetching || isLoading} onClick={() => draw()}>Save Drawing!</button></div>
             <p>Colors:</p>
             {colors.map((color, idx) => (
-              <button className={styles.colorBtn} onClick={() => colorClicked(idx)} style={{ background: `rgb(${color.join(', ')})` }}/>
+                <button className={styles.colorBtn} onClick={() => colorClicked(idx)} style={{ background: `rgb(${color.join(', ')})` }} />
             ))}
             <div className={styles.canvasContainer} ref={canvasRef} />
         </div>

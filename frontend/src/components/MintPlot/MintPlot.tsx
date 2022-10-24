@@ -220,7 +220,8 @@ export const MintPlot = () => {
             }
 
             if (params) {
-                const value = ((params.x2 - params.x1) * (params.y2 - params.y1)) * 64;
+                const weiCostPerPx = parseInt(process.env.REACT_APP_PX_COST || '');
+                const value = ((params.x2 - params.x1) * (params.y2 - params.y1)) * 64 * weiCostPerPx;
                 const stringParams = { x1: params.x1.toString(), y1: params.y1.toString(), x2: params.x2.toString(), y2: params.y2.toString() }
                 const options = {
                     params: stringParams,

@@ -51,6 +51,7 @@ describe("Token contract", function () {
       expect(await hardhatToken.parcels(2, 0)).to.equal(2);
 
       expect(await hardhatToken.tokenURI(1)).to.equal(baseUri + '1');
+      expect(await hardhatToken.contractURI()).to.equal(baseUri + 'contract-meta');
 
       const bal1 = await hardhatToken.provider.getBalance(hardhatToken.address);
 

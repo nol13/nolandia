@@ -12,8 +12,8 @@ export const ListPlots = () => {
         mintData,
         mintError,
         mintsLoading,
-        pixelError,
-        pixelsLoading,
+        //pixelError,
+        //pixelsLoading,
         combinedProcessedData
     } = useContext<PlotDataContextType>(PlotDataContext);
 
@@ -22,11 +22,11 @@ export const ListPlots = () => {
     const myPlots = useMemo(() => mintData?.filter(plot => plot.get("plotOwner")?.toLowerCase() === address), [address, mintData]);
 
 
-    if (mintError || pixelError) {
+    if (mintError) {
         return <span>🤯</span>;
     }
 
-    if (mintsLoading || pixelsLoading || !combinedProcessedData) {
+    if (mintsLoading || !combinedProcessedData) {
         return <span>🙄</span>;
     }
 

@@ -34,7 +34,7 @@ export const App = () => {
 
     const [authError, setAuthError] = useState<string>();
     // const [isAuthenticating, setIsAuthenticating] = useState(false);
-    const prefix = process.env.REACT_APP_DATA_PREFIX ? process.env.REACT_APP_DATA_PREFIX + '-' : '';
+    const prefix = process.env.REACT_APP_DATA_PREFIX ? process.env.REACT_APP_DATA_PREFIX : '';
     const { data: mintData, error: mintError, isLoading: mintsLoading } = useMoralisQuery(prefix + "Mints3", q => q, [], {live: true});
     const { data: pixelData, error: pixelError, isLoading: pixelsLoading } = useMoralisQuery(prefix + "PlotData", q => q, [], {live: true});
 
@@ -68,7 +68,7 @@ export const App = () => {
         return getPlotImageData(Object.values(combinedProcessedData));
     }, [combinedProcessedData, mappedPixelData, mappedPlotData]);
 
-    const ready = isAuthenticated && chain?.shortName === "maticmum";
+    const ready = isAuthenticated && chain?.shortName === process.env.REACT_APP_NETWORK_SHORT_NAME;
 
     const handleAuth = async (provider: Moralis.Web3ProviderType) => {
         try {

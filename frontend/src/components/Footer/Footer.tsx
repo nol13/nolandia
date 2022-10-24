@@ -37,9 +37,10 @@ const Footer = () => {
                                     <li>The map of Nolandia is a 128 x 128 parcel grid. Each parcel measures 8px x 8px.</li>
                                     <li>Plots of Nolandian No-land can be purchased that contain one or more parcels.</li>
                                     <li>You may select any unowned section of Nolandia when purchasing a plot.</li>
-                                    <li>Each parcel/pixel costs [some amount of matic or eth]</li>
+                                    <li>Each 8px by 8px parcel costs 0.064 ether.</li>
                                     <li>After purchasing you will receive an NFT granting you ownership of your plot.</li>
                                     <li>After purchasing, you may draw anything you want on plots that you own.</li>
+                                    <li>Each plot gets sparkles, resources, megafauna, and land type psuedo-randomly generated at mint time. These have no use now but could eventually have great value.</li>
                                 </ol>
                             </div>
                         </button>

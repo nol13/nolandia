@@ -81,7 +81,7 @@ export const Nolandia = () => {
         paper.view.center = paper.view.center.add(offset);
     }
 
-    console.log(process.env.REACT_APP_DATA_PREFIX)
+    //console.log(process.env.REACT_APP_DATA_PREFIX)
 
     // if (!imageData?.length) return (<div className={styles.loading}>Loading Nolandia Please Wait...</div>);
     if (mintsLoading || pixelsLoading) return (<div className={styles.loading}>Loading Nolandia Please Wait...</div>);
