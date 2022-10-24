@@ -59,7 +59,6 @@ const PlotItem: React.FC<PlotItemProps> = ({
                     <li>Land Type: {landType}</li>
                     <li>Megafauna: {megafaunaType}</li>
                 </ul>
-                <Link to={`/draw/${plotId}`} className={styles.drawBtn}>Draw</Link>
             </div>
         </li>
     );
