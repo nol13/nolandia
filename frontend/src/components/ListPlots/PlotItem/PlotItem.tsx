@@ -12,6 +12,10 @@ type PlotItemProps = {
     y1: number;
     x2: number;
     y2: number;
+    sparkles: string,
+    resource: string,
+    landType: string,
+    megafaunaType: string,
     imageData: number[] | undefined;
 }
 
@@ -22,16 +26,20 @@ const PlotItem: React.FC<PlotItemProps> = ({
     y1,
     x2,
     y2,
+    sparkles,
+    resource,
+    landType,
+    megafaunaType,
     imageData
 }) => {
-    const { canvasRef, initImage, error } = useCanvas();
+    //const { canvasRef, initImage, error } = useCanvas();
     const canvasWidth = useMemo(() => x2 - x1, [x1, x2]);
     const canvasHeight = useMemo(() => y2 - y1, [y1, y2]);
 
-    useEffect(() => {
+   /*  useEffect(() => {
         if (!imageData) return;
         initImage(imageData, canvasWidth, canvasHeight);
-    }, []);
+    }, []); */
 
     return (
         <li className={styles.plotItem}>
@@ -44,11 +52,15 @@ const PlotItem: React.FC<PlotItemProps> = ({
                 </ul>
                 <Link to={`/draw/${plotId}`} className={styles.drawBtn}>Draw</Link>
             </div>
-            {imageData && (
-                <Link to="/draw">
-                    <canvas data-paper-resize="true" ref={canvasRef} className={styles.plot} />
-                </Link>
-            )}
+            <div>
+                <ul>
+                    <li>Sparkles: {sparkles}</li>
+                    <li>Resource: {resource}</li>
+                    <li>Land Type: {landType}</li>
+                    <li>Megafauna: {megafaunaType}</li>
+                </ul>
+                <Link to={`/draw/${plotId}`} className={styles.drawBtn}>Draw</Link>
+            </div>
         </li>
     );
 };

@@ -44,6 +44,10 @@ export const ListPlots = () => {
                             y1={plot.get("y1")}
                             x2={plot.get("x2")}
                             y2={plot.get("y2")}
+                            sparkles = {plot.get('sparkles_string')}
+                            resource = {plot.get('resources')}
+                            landType = {plot.get('landType')}
+                            megafaunaType = {plot.get('megafaunaType')}
                             imageData={combinedProcessedData?.[plot.get("plotId_string")].imageData}
                         />
                     ))

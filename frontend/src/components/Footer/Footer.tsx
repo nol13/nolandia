@@ -20,7 +20,7 @@ const Footer = () => {
             <div className={classnames("wrapper", styles.footerContainer)}>
                 <div className={styles.leftFooter}>
                     <p className={styles.copyright}>Copyright &copy; 2022 Nolandia</p>
-                    <a target="#" href="https://etherscan.io/address/0x9af06f16135045f1f57fe6edea781f3cd88d72b3">
+                    <a target="#" href="https://etherscan.io/address/0xeF0b42B89723dBF369d81FaDc5617707055F79bf">
                         <img src="./etherscanlogo.png" className={styles.etherscanlogo} />
                     </a>
                     <div>
