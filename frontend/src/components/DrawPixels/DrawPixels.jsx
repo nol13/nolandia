@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect, useContext } from "react";
 import { useMoralisCloudFunction } from "react-moralis";
-import PixelEditor from '@potch/pixeleditor/pixeleditor';
+import PixelEditor from './pixeleditor';
 import { useParams } from "react-router-dom";
 
 import styles from './DrawPixels.module.scss';
@@ -16,10 +16,12 @@ const colors = [
     [0, 0, 255],     // blue
     [24, 77, 255],     // blue
     [24, 77, 0],     // blue
-    [24, 245, 50],     // blue
-    [9, 245, 50],     // blue
-    [24, 245, 50],     // blue
-    [255, 0, 255]    // magenta
+    [102, 51, 0],     // brown
+    [64, 64, 64],     // grey
+    [204, 102, 0],     // orange
+    [255, 0, 255],    // magenta
+    [51, 0, 102],    // purple
+    [151, 0, 0]    // dark red
 ];
 
 export const DrawPixels = () => {
@@ -48,7 +50,7 @@ export const DrawPixels = () => {
             setNumberOfPx(height * width);
 
             const minDim = Math.min(height, width);
-            const zoom = Math.floor(Math.max(16, (minDim / 8) * 2));
+            const zoom = Math.floor(Math.max(18, (minDim / 8) * 2));
 
             pixEditorRef.current = new PixelEditor({
                 width,
