@@ -7,7 +7,7 @@ import '../styles.scss';
 
 export const Dapp = () => {
   return (
-    <MoralisProvider serverUrl={process.env.REACT_APP_SERVER_URL || ''} appId={process.env.REACT_APP_APP_ID || ''}>
+    <MoralisProvider serverUrl={process.env.REACT_APP_SERVER_URL ? `${process.env.REACT_APP_SERVER_URL}/server` : ''} appId={process.env.REACT_APP_APP_ID || ''}>
       <BrowserRouter>
         <App />
       </BrowserRouter>
