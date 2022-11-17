@@ -8,6 +8,15 @@ import useCanvas from '../../hooks/useCanvas'
 import styles from './DrawPixels.module.scss';
 import { PlotDataContext } from "../App/App";
 
+const LEFT_MOUSE_BUTTON = 1;
+const RIGHT_MOUSE_BUTTON = 3;
+const DRAW_TOOL = 'draw';
+const ERASE_TOOL = 'erase';
+const LIST_TOOLS = [DRAW_TOOL, ERASE_TOOL];
+
+const DEFAULT_COLOR = '#000000';
+const DEFAULT_COLOR_HIGHLIGHT = '#7B3FE4';
+
 export const DrawPixels = () => {
     const { data, error, runContractFunction, isFetching, isLoading } =
         useWeb3Contract({
@@ -20,6 +29,7 @@ export const DrawPixels = () => {
     const [xScale, setXScale] = useState(1);
     const [yScale, setYScale] = useState(1);
     const [rect, setRect] = useState();
+    const [color, setColor] = useState(DEFAULT_COLOR);
     const { plotId } = useParams();
     const { combinedProcessedData } = useContext(PlotDataContext);
     const {
@@ -34,6 +44,7 @@ export const DrawPixels = () => {
         resizeImageData
     } = useCanvas();
     const plot = useMemo(() => combinedProcessedData[plotId], [plotId]);
+    const mousePosition = useRef({ x: 0, y: 0 });
     const mousePressed = useRef(false);
 
     useEffect(() => {
@@ -60,44 +71,86 @@ export const DrawPixels = () => {
         resizeImageData(imageData, canvasWidth, canvasHeight);
     }, [canvas, ctx, imageData]);
 
-    const getCanvasEventPosition = (event) => {
+    const checkIfCanvasAndCtxAreReady = () => ctx && canvas;
+
+    const setCurrentEventPosition = (event) => {
+        if (!rect) return;
         const x = Math.floor((Math.floor(event.clientX - rect.left)) / xScale);
         const y = Math.floor((Math.floor(event.clientY - rect.top)) / yScale);
-        return { x, y }
+        mousePosition.current = { x, y };
     }
 
-   const drawHighlight = (x, y) => {
-       ctx.clearRect(0, 0, canvas.width, canvas.height);
+    const checkMouseButton = (event) => {
+        const { which } = event.nativeEvent;
+        let tool = DRAW_TOOL;
 
-       ctx.fillRect(x, y, 1, .1);
-       ctx.fillRect(x, y, .1, 1);
-       ctx.fillRect(x + 1, y, .1, 1);
-       ctx.fillRect(x, y + 1, 1, .1);
+        if (which === RIGHT_MOUSE_BUTTON) {
+            tool = ERASE_TOOL;
+        }
+        return tool;
+    }
 
-       ctx.fill();
+   const drawHighlight = () => {
+        if (!checkIfCanvasAndCtxAreReady()) return;
+       // const { x, y } = mousePosition.current;
+       // ctx.beginPath();
+       // ctx.fillStyle = DEFAULT_COLOR_HIGHLIGHT;
+       // ctx.fillRect(x, y, 1, .1);
+       // ctx.fillRect(x, y, .1, 1);
+       // ctx.fillRect(x + 1, y, .1, 1);
+       // ctx.fillRect(x, y + 1, 1, .1);
    }
 
-   const drawPixel = (x, y, color) => {
-       if (!mousePressed.current) return;
+   const drawTool = () => {
+       if (!checkIfCanvasAndCtxAreReady()) return;
+       const { x, y } = mousePosition.current;
+       ctx.beginPath();
        ctx.fillStyle = color;
        ctx.rect(x, y, 1, 1);
        ctx.fill();
    }
 
-    const handleMove = (event) => {
-        const { x, y } = getCanvasEventPosition(event);
+   const eraseTool = () => {
+       if (!checkIfCanvasAndCtxAreReady()) return;
+       const { x, y } = mousePosition.current;
+       ctx.clearRect(x, y, 1, 1);
+   }
 
-        drawHighlight(x, y);
-        drawPixel(x, y, '#ff0000');
+   const handleCurrentTool = (tool) => {
+       if (!mousePressed.current) return;
+
+       if (tool === DRAW_TOOL) {
+           drawTool();
+           return;
+       }
+
+       if (tool === ERASE_TOOL) {
+           eraseTool();
+           return;
+       }
+   }
+
+    const handleMove = (event) => {
+        setCurrentEventPosition(event);
+        const tool = checkMouseButton(event);
+
+        drawHighlight();
+        handleCurrentTool(tool);
     }
 
     const handleMouseDown = (event) => {
-        const { x, y } = getCanvasEventPosition(event);
+        setCurrentEventPosition(event);
+        const tool = checkMouseButton(event);
+
         mousePressed.current = true;
-        drawPixel(x, y, '#ff0000');
+        handleCurrentTool(tool);
     };
-    const handleMouseUp = () => mousePressed.current = false;
+    const handleMouseUp = () => {
+        mousePressed.current = false;
+
+    };
     const handleMouseLeave = () => mousePressed.current = false;
+
 
     // const draw = () => {
     //     if (!isWeb3Enabled) return;
@@ -133,6 +186,7 @@ export const DrawPixels = () => {
                     onMouseUp={handleMouseUp}
                     onMouseMove={handleMove}
                     onMouseLeave={handleMouseLeave}
+                    onContextMenu={(e) => e.preventDefault()}
                     ref={canvasRef}
                     className={styles.canvas}
                   />
