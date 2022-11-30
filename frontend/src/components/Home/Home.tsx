@@ -69,25 +69,19 @@ export const connectors = [
 
 export const Home = () => {
 
-    const { isAuthenticated, user } = useMoralis();
-    const { switchNetwork, chain, /* network, chainId, account */ } = useChain();
+    const { isAuthenticated } = useMoralis();
+    const { switchNetwork, chain } = useChain();
 
     const ready = isAuthenticated && chain?.shortName === process.env.REACT_APP_NETWORK_SHORT_NAME;
 
     return (
         <>
-            {/* <div>{account || ''} {chain?.name || ''} {chainId || ""} {network || ""} {chain?.shortName || ""}</div> */}
-            {/*<h1>{isAuthenticated && 'Authenticated '}Hello Wyrld!</h1>*/}
-            {/*<p>Welcome to Nolandia {user?.get("ethAddress")}!</p>*/}
-            {/*{ready && <div style={{ margin: '10px' }}><Link to="buyplot">Buy PlotItem</Link></div>}*/}
-            {/*{ready && <div style={{ margin: '10px' }}><Link to="yourplots">Your Plots</Link></div>}*/}
-            {/*{ready && <div style={{ margin: '10px' }}><Link to="draw">Draw On Your PlotItem</Link></div>}*/}
             {isAuthenticated && !ready && (
                 <div>
-                    <br />
                     Please switch your network to Etherium to use the app.
-                    <br /><br />
-                    <button onClick={() => switchNetwork(networks[parseInt(process.env.REACT_APP_NETWORK_INDEX || "3")].key)}>Switch to Etherium</button>
+                    <button onClick={() => switchNetwork(networks[parseInt(process.env.REACT_APP_NETWORK_INDEX || "3")].key)}>
+                        Switch to Etherium
+                    </button>
                 </div>
             )}
             <Nolandia />

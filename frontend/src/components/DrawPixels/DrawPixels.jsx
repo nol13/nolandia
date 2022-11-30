@@ -69,13 +69,15 @@ export const DrawPixels = () => {
     const draw = () => {
         const imageData = pixEditorRef.current?.toImageData();
         if (imageData?.data?.length) {
-            drawPx({ params: {
-                plotId, imageData: Array.from(imageData.data),
-                // eslint-disable-next-line no-undef
-                prefix: process.env.REACT_APP_DATA_PREFIX,
-                // eslint-disable-next-line no-undef
-                chain: process.env.REACT_APP_NETWORK_ID
-            } });
+            drawPx({
+                params: {
+                    plotId, imageData: Array.from(imageData.data),
+                    // eslint-disable-next-line no-undef
+                    prefix: process.env.REACT_APP_DATA_PREFIX,
+                    // eslint-disable-next-line no-undef
+                    chain: process.env.REACT_APP_NETWORK_ID
+                }
+            });
         }
     };
 
@@ -87,7 +89,9 @@ export const DrawPixels = () => {
         <div className={styles.container}>
             <h1>Draw on plot #{plotId}</h1>
             <div>Total Px: {numberOfPx}</div>
-            <div><button className={styles.drawButton} disabled={isFetching || isLoading} onClick={() => draw()}>Save Drawing!</button></div>
+            <div>
+                <button className={styles.drawButton} disabled={isFetching || isLoading} onClick={() => draw()}>Save Drawing!</button>
+            </div>
             <p>Colors:</p>
             {colors.map((color, idx) => (
                 <button className={styles.colorBtn} onClick={() => colorClicked(idx)} style={{ background: `rgb(${color.join(', ')})` }} />

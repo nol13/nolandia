@@ -1,5 +1,5 @@
-import React, {useState, useEffect, useContext, useRef, SyntheticEvent} from "react";
-import { useWeb3Contract, useMoralis } from "react-moralis";
+import React, { useState, useEffect, useContext, useRef, RefObject } from "react";
+import { useWeb3Contract } from "react-moralis";
 import classnames from "classnames";
 import { ToastContainer, toast } from 'react-toastify';
 import NolandiaAbi from '../../contracts/Nolandia.json';
@@ -19,6 +19,8 @@ interface PointPair {
     y1: number,
     y2: number
 }
+
+type ParcelsOwned = boolean[][];
 
 const getCoordsFromPoints = (xp1: number, xp2: number, yp1: number, yp2: number): PointPair => {
 
@@ -49,11 +51,29 @@ const getCoordsFromPoints = (xp1: number, xp2: number, yp1: number, yp2: number)
         y2 = yp1;
     }
 
-    return {x1, x2, y1, y2};
+    return { x1, x2, y1, y2 };
 };
 
+const OWNED_PARCEL_COLOR = '#bf7ff9';
+const SELECTED_PARCEL_COLOR = '#7B3FE4';
+
+const paintOwned = (plotGridRef: RefObject<HTMLCanvasElement>, parcelsOwned: ParcelsOwned | undefined) => {
+    if (parcelsOwned && plotGridRef.current) {
+        const ctx = plotGridRef.current.getContext("2d");
+        if (!ctx) return;
+        parcelsOwned.forEach((row, y) => {
+            row.forEach((parcelVal, x) => {
+                if (parcelVal) {
+                    ctx.fillStyle = OWNED_PARCEL_COLOR;
+                    ctx.fillRect(x * 8 + 1, y * 8 + 1, 7, 7);
+                }
+            })
+        })
+    }
+}
+
 export const MintPlot = () => {
-    const { /*data,*/ error, runContractFunction, /*isFetching, isLoading*/ } =
+    const { error, runContractFunction } =
         useWeb3Contract({
             abi: NolandiaAbi.abi,
             contractAddress: contractAddress.Nolandia,
@@ -63,9 +83,7 @@ export const MintPlot = () => {
     const [point1, setPoint1] = useState<Point>();
     const [point2, setPoint2] = useState<Point>();
     const [clickPos, setClickPos] = useState<Point>();
-
-    const [parcelsOwned, setParcelsOwned] = useState<boolean[][]>();
-
+    const [parcelsOwned, setParcelsOwned] = useState<ParcelsOwned>();
     const plotGridRef = useRef<HTMLCanvasElement>(null);
 
     const {
@@ -86,13 +104,13 @@ export const MintPlot = () => {
     useEffect(() => {
         if (!error) return;
         toast.error('Something went wrong!');
-    }, [error])
+    }, [error]);
 
     useEffect(() => {
         if (mappedPlotData) {
             const newParcelsOwned = Array(128).map(() => Array(128));
             for (const plot of mappedPlotData) {
-                const {x1, x2, y1, y2 } = plot;
+                const { x1, x2, y1, y2 } = plot;
                 for (let i = y1; i < y2; i++) {
                     const row = newParcelsOwned[i] ? newParcelsOwned[i] : Array(128);
                     for (let j = x1; j < x2; j++) {
@@ -107,53 +125,45 @@ export const MintPlot = () => {
 
     useEffect(() => {
         if (parcelsOwned && plotGridRef.current) {
-            paintOwned();
+            paintOwned(plotGridRef, parcelsOwned);
         }
-    }, [parcelsOwned, plotGridRef.current]);
+    }, [parcelsOwned]);
 
     useEffect(() => {
         const ctx = plotGridRef.current?.getContext("2d");
         if (ctx && plotGridRef.current) {
             if (point1 && !point2) {
                 ctx.clearRect(0, 0, plotGridRef.current.width, plotGridRef.current.height);
-                paintOwned();
+                paintOwned(plotGridRef, parcelsOwned);
                 const { x, y } = point1;
                 if (!parcelsOwned?.[y]?.[x]) {
-                    ctx.fillStyle = '#7B3FE4';
+                    ctx.fillStyle = SELECTED_PARCEL_COLOR;
                     ctx.fillRect(x * 8 + 1, y * 8 + 1, 7, 7);
-                    //setNumSelected(1);
                     toast(`You have selected a parcel: ${1}x${1}
                     Coordinates: (${x}, ${y}) - (${x + 1}, ${y + 1})`);
                 } else {
                     setPoint1(undefined);
-                    //setNumSelected(0);
-                    //setShowOwnedError(true);
                     toast.error('You cannot select a parcel that someone already own');
                 }
 
             } else if (point1 && point2) {
-                const {x: xp1, y: yp1} = point1;
-                const {x: xp2, y: yp2} = point2;
+                const { x: xp1, y: yp1 } = point1;
+                const { x: xp2, y: yp2 } = point2;
 
                 if (xp1 === xp2 && yp1 === yp2) {
                     setPoint2(undefined);
-                    //setNumSelected(1);
                     return;
-                } else  {
-                   const {x1, x2, y1, y2} = getCoordsFromPoints(xp1, xp2, yp1, yp2);
-
+                } else {
+                    const { x1, x2, y1, y2 } = getCoordsFromPoints(xp1, xp2, yp1, yp2);
                     ctx.clearRect(0, 0, plotGridRef.current.width, plotGridRef.current.height);
-                    paintOwned();
+                    paintOwned(plotGridRef, parcelsOwned);
                     for (let i = x1; i <= x2; i++) {
                         for (let j = y1; j <= y2; j++) {
                             if (parcelsOwned?.[j]?.[i]) {
                                 ctx.clearRect(0, 0, plotGridRef.current.width, plotGridRef.current.height);
-                                paintOwned();
+                                paintOwned(plotGridRef, parcelsOwned);
                                 setPoint1(undefined);
                                 setPoint2(undefined);
-                                //setShowOwnedError(true);
-                                //setNumSelected(0);
-
                                 toast.error('You cannot select a parcel that someone already own');
                                 return;
                             }
@@ -163,8 +173,6 @@ export const MintPlot = () => {
                     }
                     toast(`You have selected a parcel: ${x2 - x1 + 1}x${y2 - y1 + 1}
                     Coordinates: (${x1}, ${y1}) - (${x2}, ${y2})`);
-
-
                 }
             }
 
@@ -172,10 +180,9 @@ export const MintPlot = () => {
     }, [point1, point2, parcelsOwned]);
 
     const selectParcel = (event: React.MouseEvent<HTMLCanvasElement>) => {
-        const {clientX, clientY} = event;
+        const { clientX, clientY } = event;
         const ctx = plotGridRef.current?.getContext("2d");
         if (ctx && plotGridRef.current) {
-            //setShowOwnedError(false);
             const { left, top } = plotGridRef.current.getBoundingClientRect();
             const x = clientX - left;
             const y = clientY - top;
@@ -186,33 +193,18 @@ export const MintPlot = () => {
             } else if (point1 && point2) {
                 setPoint2(undefined);
             }
-            setPoint1({x: plotX, y: plotY});
+            setPoint1({ x: plotX, y: plotY });
         }
     }
 
-    const paintOwned = () => {
-        if (parcelsOwned && plotGridRef.current) {
-            const ctx = plotGridRef.current.getContext("2d");
-            if (!ctx) return;
-            parcelsOwned.forEach((row, y) => {
-                row.forEach((parcelVal, x) => {
-                    if (parcelVal) {
-                        ctx.fillStyle = '#bf7ff9';
-                        ctx.fillRect(x * 8 + 1, y * 8 + 1, 7, 7);
-                    }
-                })
-            })
-        }
-    };
-
     const mint = () => {
-        const {x: x1, y: y1 } = point1 || {};
-        const {x: x2, y: y2 } = point2 || {};
+        const { x: x1, y: y1 } = point1 || {};
+        const { x: x2, y: y2 } = point2 || {};
 
         if (x1 !== undefined && y1 !== undefined) {
             let params;
             if (x2 !== undefined && y2 !== undefined) {
-                params = getCoordsFromPoints( x1, x2, y1, y2);
+                params = getCoordsFromPoints(x1, x2, y1, y2);
                 params.x2 = params.x2 + 1;
                 params.y2 = params.y2 + 1;
             } else {
@@ -284,25 +276,14 @@ export const MintPlot = () => {
     };
     return (
         <div>
-            {/*<h1>Mint New Plot</h1>*/}
-            {/*<h3>Click once to select one parcel, click again to select multiple parcels.</h3>*/}
-            {/*<div>*/}
-            {/*    <button className={styles.mintButton} disabled={isFetching || isLoading} onClick={mint}>Mint!</button>*/}
-            {/*</div>*/}
-            {/*<div>data: {JSON.stringify(data)}</div>*/}
-            {/*<div>mint error: {JSON.stringify(error)}</div>*/}
-            {/*<div>you own: {JSON.stringify(balanceData)} plots</div>*/}
-            {/*<div>balance check error: {JSON.stringify(bError)}</div>*/}
-            {/*{showOwnedError && <div style={{color: 'red'}}>Can't buy owned!</div>}*/}
-            {/*<div>1: {point1?.x}, {point1?.y} 2: {point2?.x}, {point2?.y} - Parcels Selected: {numSelected}</div>*/}
             <ToastContainer />
             <div className={styles.instructions}>Click once to select a one parcel plot. Or click a 2nd parcel to select a multiple parcel plot.</div>
             <div className={styles.instructions}>Each 8px by 8px parcel costs 0.064 ether, 0.001 ether per pixel.</div>
             <div className={styles.canvasContainer}>
-                <canvas className={styles.plotCanvas} width="1024" height="1024"  ref={plotGridRef} id={styles.canvas} onClick={selectParcel}/>
+                <canvas className={styles.plotCanvas} width="1024" height="1024" ref={plotGridRef} id={styles.canvas} onClick={selectParcel} />
                 {point1 && clickPos && (
                     <button
-                        style={{top: getTopPosMint(), left: getLeftPosMint()}}
+                        style={{ top: getTopPosMint(), left: getLeftPosMint() }}
                         type="button"
                         onClick={mint}
                         className={classnames(styles.mintBtn, styles?.[calculateMintButtonPosition()?.arrowPos])}

@@ -1,5 +1,5 @@
 
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo } from "react";
 import { useMoralis, useChain, useMoralisQuery /* , useMoralisCloudFunction */ } from "react-moralis";
 import type { Moralis } from 'moralis';
 import { Routes, Route } from "react-router-dom";
@@ -11,7 +11,7 @@ import { combineAndProcessPlotData, combinedPlotData, getPlotImageData, plot, pl
 import Footer from "../Footer/Footer";
 import Header from "../Header/Header";
 
-export const PlotDataContext = React.createContext<PlotDataContextType>({mintError: null, pixelError: null});
+export const PlotDataContext = React.createContext<PlotDataContextType>({ mintError: null, pixelError: null });
 
 const defaultImgData: number[] = [];
 
@@ -29,18 +29,34 @@ export interface PlotDataContextType {
 }
 
 export const App = () => {
-    const { Moralis, isWeb3Enabled, enableWeb3, isAuthenticated, isWeb3EnableLoading, /* logout, /*isAuthenticating,*/ authenticate, logout } = useMoralis();
+    const {
+        Moralis,
+        isWeb3Enabled,
+        enableWeb3,
+        isAuthenticated,
+        isWeb3EnableLoading,
+        user,
+        authenticate,
+        logout,
+        account
+    } = useMoralis();
     const { chain } = useChain();
 
-    const [authError, setAuthError] = useState<string>();
+    // const [authError, setAuthError] = useState<string>();
     // const [isAuthenticating, setIsAuthenticating] = useState(false);
     const prefix = process.env.REACT_APP_DATA_PREFIX ? process.env.REACT_APP_DATA_PREFIX : '';
-    const { data: mintData, error: mintError, isLoading: mintsLoading } = useMoralisQuery(prefix + "Mints3", q => q, [], {live: true});
-    const { data: pixelData, error: pixelError, isLoading: pixelsLoading } = useMoralisQuery(prefix + "PlotData", q => q, [], {live: true});
+    const { data: mintData, error: mintError, isLoading: mintsLoading } = useMoralisQuery(prefix + "Mints3", q => q, [], { live: true });
+    const { data: pixelData, error: pixelError, isLoading: pixelsLoading } = useMoralisQuery(prefix + "PlotData", q => q, [], { live: true });
 
     useEffect(() => {
         if (isAuthenticated && !isWeb3Enabled && !isWeb3EnableLoading) enableWeb3();
     }, [enableWeb3, isAuthenticated, isWeb3EnableLoading, isWeb3Enabled]);
+
+    useEffect(() => {
+        if (account && user && account !== user?.get("ethAddress")) {
+            logout?.();
+        }
+    }, [account, logout, user])
 
     const mappedPlotData = useMemo(() => {
         if (!mintData) return;
@@ -72,14 +88,12 @@ export const App = () => {
 
     const handleAuth = async (provider: Moralis.Web3ProviderType) => {
         try {
-            setAuthError(undefined);
-            //setIsAuthenticating(true);
+            // setAuthError(undefined);
+            // setIsAuthenticating(true);
 
             // Enable web3 to get user address and chain
             await enableWeb3({ throwOnError: true, provider });
             const { account, chainId } = Moralis;
-
-            // console.log({account, chainId})
 
             if (!account) {
                 throw new Error('Connecting to chain failed, as no connected account was found');
@@ -101,21 +115,11 @@ export const App = () => {
                 throwOnError: true,
             });
         } catch (error) {
-            setAuthError("auth error");
+            // setAuthError("auth error");
         } finally {
             //setIsAuthenticating(false);
         }
     };
-
-    /* const login = async () => {
-        if (!isAuthenticated && !isAuthenticating) {
-            try {
-                await authenticate({ signingMessage: "Log into nolandia!" })
-            } catch (error) {
-                console.log(1, error);
-            }
-        }
-    } */
 
     const logOut = async () => {
         await logout();
@@ -127,14 +131,13 @@ export const App = () => {
                 mintData,
                 pixelData,
                 imageData,
-                //mappedPixelData,
                 mappedPlotData,
                 mintError,
                 mintsLoading,
                 pixelError,
                 pixelsLoading,
                 combinedProcessedData
-                }}>
+            }}>
                 <div className="container">
                     <Header login={() => handleAuth("metamask")} logout={logOut} isAuth={isAuthenticated} />
                     <Routes>
@@ -142,9 +145,9 @@ export const App = () => {
                         {ready && (<>
                             <Route path="buyplot" element={<MintPlot />} />
                             <Route path="myplots" element={<ListPlots />} />
-                                <Route path="draw" element={<DrawPixels />}>
-                                    <Route path=":plotId" element={<DrawPixels />} />
-                                </Route>
+                            <Route path="draw" element={<DrawPixels />}>
+                                <Route path=":plotId" element={<DrawPixels />} />
+                            </Route>
                         </>
                         )}
                         <Route path="*" element={<Home />} />

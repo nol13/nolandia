@@ -3,7 +3,6 @@
 #canvas {
   background: $bg-color-main;
   border-radius: 6px;
-  //width: 100vw;
   width: calc(100vh - 100px);
   height: calc(100vh - 100px);
   box-shadow: 6px 6px 25px rgba(0, 0, 0, .1);
@@ -13,6 +12,14 @@
   position: relative;
   cursor: grab;
   border: 1px solid $main-color;
+
+  @media screen and (max-width: 768px) {
+    height: calc(100vh - 140px);
+  }
+
+    @media screen and (max-width: 388px) {
+      height: calc(100vh - 160px);
+    }
 }
 
 .loading {
@@ -31,4 +38,8 @@
   left: 5px;
   position: fixed;
   font-size: 18px;
+
+  @media screen and (max-width: 1024px) {
+      display: none;
+  }
 }

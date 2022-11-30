@@ -6,10 +6,33 @@
   box-shadow: $main-shadow;
 }
 
+.linkContainerMobile {
+  display: none;
+  @media screen and (max-width: 768px) {
+    display: flex;
+    flex: 1;
+    justify-content: flex-start;
+    column-gap: 5px;
+    padding-left: 5px;
+    padding-top: 3px;
+  }
+}
+
 .container {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex: 1;
+
+  @media screen and (max-width: 768px) {
+      .linkContainer {
+        display: none;
+      }
+  
+      :global(.standard-btn) {
+        padding: 3px;
+      }
+    }
 }
 
 .logo {
@@ -37,5 +60,13 @@
 
 a.disabled, a.disabled:visited  {
   color: gray;
+}
+
+.rightSection {
+  display: flex;
+  flex: 1;
+  justify-content: flex-end;
+  margin-left: 5px;
+  align-items: center;
 }
 
